@@ -1,0 +1,12 @@
+.beat {
+    height: 50px;
+    width: 50px;
+    display: inline-block;
+    margin: 10px;
+}
+
+.track {
+    background-color: lightgray;
+    width: 1200px;
+    padding: 10px;
+}
