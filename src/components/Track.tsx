@@ -5,17 +5,18 @@ import * as Tone from 'tone'
 type TrackProps = {
     trackName: string,
     instrumentLocation: string,
+    category: string,
     currentBeat: number,
     deleteTrack: (trackName: string)=>void,
     toggleBeat: (beatCount: number)=>void,
     switchInstruments: any // FIX ME!! TODO
     beats: Array<boolean>,
     state: any,
-    setPlayers: any, // FIX ME!! TODO
+    playersRef: any, // FIX ME TODO
     isPlaying: boolean // FIX ME!! TODO
 };
 
-const Track = ({trackName, instrumentLocation, currentBeat, deleteTrack, toggleBeat, switchInstruments, beats, state, setPlayers, isPlaying} : TrackProps) => {
+const Track = ({trackName, instrumentLocation, category, currentBeat, deleteTrack, toggleBeat, switchInstruments, beats, state, playersRef, isPlaying} : TrackProps) => {
 
     const disableSelectionOfTrack = (track): boolean => {
         // If this is the current track, don't disable
@@ -30,18 +31,16 @@ const Track = ({trackName, instrumentLocation, currentBeat, deleteTrack, toggleB
         return true;
     }
 
-    const allTracks = [...state.inUseTracks, ...state.availableTracks].sort((a, b) => {
+    let allTracks = [...state.inUseTracks, ...state.availableTracks].sort((a, b) => {
         return a.displayName.localeCompare(b.displayName);
     });
 
-
+    allTracks = allTracks.filter((track) => track.category === category);
+    
+    const [volume, setVolume] = React.useState(0);
     React.useEffect(() => {
-        const player = new Tone.Player(instrumentLocation).toDestination();
-        setPlayers(players => ({
-            ...players,
-            [trackName]: player,
-        }));
-    }, [trackName]);
+        playersRef.current[trackName].volume.value = volume;
+    }, [volume]);
 
     return (
         <div className="track">
@@ -61,11 +60,7 @@ const Track = ({trackName, instrumentLocation, currentBeat, deleteTrack, toggleB
                 </select>
 
                 {/* Volume Slider */}
-                <input type="range" min="0" max="100" value="50" step="1" onChange={(event) => 
-                    setPlayers(players => {
-                        players[trackName].volume.value = event.target.value
-                    })
-                } />
+                <input type="range" min="-20" max="20" value={volume} step="0.1" onChange={(event) => setVolume(Math.round(parseFloat(event.target.value) * 10) / 10) } />
 
                 {/* Delete Track */}
                 <button onClick={() => deleteTrack(trackName)}>Delete Track</button>

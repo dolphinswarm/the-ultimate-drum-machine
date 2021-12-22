@@ -1,6 +1,7 @@
 import React from 'react'
 import Track from './Track'
 import * as Tone from 'tone'
+import ControlsContainer from './ControlsContainer';
 
 // type DrumMachineProps = {play: void};
 
@@ -18,21 +19,221 @@ const DrumMachine = () => {
     const initialState = {
         inUseTracks: [],
         availableTracks: [
+            // ================ KICKS
             {
-                displayName: "Kick",
-                instrumentLocation: "/sample/kick-1.wav",
+                displayName: "Heavy Trap Kick",
+                category: "kick",
+                instrumentLocation: "/sample/kick/kick-1.wav",
             },
             {
-                displayName: "Snare",
-                instrumentLocation: "/sample/snare-1.wav"
+                displayName: "Acoustic Kick #1",
+                category: "kick",
+                instrumentLocation: "/sample/kick/kick-2.wav",
             },
             {
-                displayName: "Hi-Hat",
-                instrumentLocation: "/sample/hihat-1.wav"
+                displayName: "Acoustic Kick #2",
+                category: "kick",
+                instrumentLocation: "/sample/kick/kick-6.wav",
             },
+            {
+                displayName: "Light Trap Kick",
+                category: "kick",
+                instrumentLocation: "/sample/kick/kick-3.wav",
+            },
+            {
+                displayName: "Boom Kick",
+                category: "kick",
+                instrumentLocation: "/sample/kick/kick-7.wav",
+            },
+            {
+                displayName: "Hip-Hop Vinyl Kick",
+                category: "kick",
+                instrumentLocation: "/sample/kick/kick-5.wav",
+            },
+            {
+                displayName: "8-Bit Kick",
+                category: "kick",
+                instrumentLocation: "/sample/kick/kick-4.wav",
+            },
+            // ================ SNARES
+            {
+                displayName: "Acoustic Snare #1",
+                category: "snare",
+                instrumentLocation: "/sample/snare/snare-1.wav",
+            },
+            {
+                displayName: "Acoustic Snare #2",
+                category: "snare",
+                instrumentLocation: "/sample/snare/snare-2.wav",
+            },
+            {
+                displayName: "Acoustic Snare #3",
+                category: "snare",
+                instrumentLocation: "/sample/snare/snare-7.wav",
+            },
+            {
+                displayName: "Hip-Hop Snare",
+                category: "snare",
+                instrumentLocation: "/sample/snare/snare-3.wav",
+            },
+            {
+                displayName: "Trap Snare #1",
+                category: "snare",
+                instrumentLocation: "/sample/snare/snare-4.wav",
+            },
+            {
+                displayName: "Trap Snare #2",
+                category: "snare",
+                instrumentLocation: "/sample/snare/snare-5.wav",
+            },
+            {
+                displayName: "Trap Snare #3",
+                category: "snare",
+                instrumentLocation: "/sample/snare/snare-6.wav",
+            },
+            {
+                displayName: "8-Bit Snare",
+                category: "snare",
+                instrumentLocation: "/sample/snare/snare-8.wav",
+            },
+            // ================ HI-HATS
+            {
+                displayName: "Acoustic Closed Hi-Hat #1",
+                category: "hihat",
+                instrumentLocation: "/sample/hihat/hihat-closed-1.wav",
+            },
+            {
+                displayName: "Acoustic Closed Hi-Hat #2",
+                category: "hihat",
+                instrumentLocation: "/sample/hihat/hihat-closed-6.wav",
+            },
+            {
+                displayName: "Trap Closed Hi-Hat #1",
+                category: "hihat",
+                instrumentLocation: "/sample/hihat/hihat-closed-2.wav",
+            },
+            {
+                displayName: "Trap Closed Hi-Hat #2",
+                category: "hihat",
+                instrumentLocation: "/sample/hihat/hihat-closed-3.wav",
+            },
+            {
+                displayName: "Trap Closed Hi-Hat #3",
+                category: "hihat",
+                instrumentLocation: "/sample/hihat/hihat-closed-4.wav",
+            },
+            {
+                displayName: "Trap Closed Hi-Hat #4",
+                category: "hihat",
+                instrumentLocation: "/sample/hihat/hihat-closed-5.wav",
+            },
+            {
+                displayName: "Acoustic Open Hi-Hat",
+                category: "hihat",
+                instrumentLocation: "/sample/hihat/hihat-open-1.wav",
+            },
+            {
+                displayName: "Trap Open Hi-Hat #1",
+                category: "hihat",
+                instrumentLocation: "/sample/hihat/hihat-open-2.wav",
+            },
+            {
+                displayName: "Trap Open Hi-Hat #2",
+                category: "hihat",
+                instrumentLocation: "/sample/hihat/hihat-open-3.wav",
+            },
+            {
+                displayName: "Trap Open Hi-Hat #3",
+                category: "hihat",
+                instrumentLocation: "/sample/hihat/hihat-open-4.wav",
+            },
+            // ================ CLAPS
+            {
+                displayName: "Clap #1",
+                category: "clap",
+                instrumentLocation: "/sample/clap/clap-1.wav",
+            },
+            {
+                displayName: "Clap #2",
+                category: "clap",
+                instrumentLocation: "/sample/clap/clap-2.wav",
+            },
+            {
+                displayName: "Clap #3",
+                category: "clap",
+                instrumentLocation: "/sample/clap/clap-3.wav",
+            },
+            {
+                displayName: "Clap #4",
+                category: "clap",
+                instrumentLocation: "/sample/clap/clap-4.wav",
+            },
+            {
+                displayName: "Clap #5",
+                category: "clap",
+                instrumentLocation: "/sample/clap/clap-5.wav",
+            },
+            // ================ RIDES
             {
                 displayName: "Cat",
-                instrumentLocation: "/sample/meow-1.wav"
+                category: "fx",
+                instrumentLocation: "/sample/fx/meow-1.wav",
+            },
+            {
+                displayName: "Crash Cymbal 1",
+                category: "crash",
+                instrumentLocation: "/sample/crash/crash-1.wav",
+            },
+            {
+                displayName: "Ride Cymbal 1",
+                category: "ride",
+                instrumentLocation: "/sample/ride/ride-1.wav",
+            },
+            // ================ ACCESSORIES
+            {
+                displayName: "Cowbell",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/cowbell-1.wav",
+            },
+            {
+                displayName: "Bongo (Hi)",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/bongo-hi-1.wav",
+            },
+            {
+                displayName: "Bongo (Lo)",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/bongo-lo-1.wav",
+            },
+            {
+                displayName: "Shaker #1",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/shaker-1.wav",
+            },
+            {
+                displayName: "Shaker #2",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/shaker-2.wav",
+            },
+            {
+                displayName: "Shaker #3",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/shaker-3.wav",
+            },
+            {
+                displayName: "Shaker #4",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/shaker-4.wav",
+            },
+            {
+                displayName: "Tambourine",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/tambourine-1.wav",
+            },
+            {
+                displayName: "Triangle",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/triangle-1.wav",
             },
         ],
     }
@@ -74,6 +275,8 @@ const DrumMachine = () => {
     const stateRef = React.useRef(state);
     stateRef.current = state;
 
+    const trackCategoryRef = React.useRef<any>(null);
+
     // ==============================
     // DRUM MACHINE FUNCTIONS
     // ==============================
@@ -91,11 +294,25 @@ const DrumMachine = () => {
     }
 
     /**
+     * Toggle play / stop of the machine.
+     */
+    const toggleIsPlaying = () => { setIsPlaying(!isPlaying); }
+
+    /**
+     * Change the BPM.
+     */
+    const changeBpm = (bpm) => { setBpm(parseFloat(bpm)); }
+
+    /**
      * Adds a track to the list of tracks.
      */
     const addTrack = (): void => {
         // Get the first available track, if any
-        const availableTrack = state.availableTracks[0];
+        // const availableTrack = state.availableTracks[0];
+
+        // Get the first available track of a selected category, if any
+        const category = trackCategoryRef.current.value;
+        const availableTrack = state.availableTracks.filter((item) => item.category === category)[0];
 
         // Make a new track
         const newTrack = {
@@ -106,6 +323,13 @@ const DrumMachine = () => {
 
         // Increment the sort order
         setSortOrder(sortOrder + 1);
+
+        // Create a new track
+        const player = new Tone.Player(newTrack.instrumentLocation).toDestination();
+        setPlayers(players => ({
+            ...players,
+            [availableTrack.displayName]: player,
+        }));
 
         // Add the track to the state
         dispatch({type: 'AddTrack', payload: { newTrack }});
@@ -135,6 +359,13 @@ const DrumMachine = () => {
         newTrack.id = oldTrack.id;
         oldTrack.beats = new Array(16).fill(false);
         oldTrack.id = null;
+
+        // Create a new track
+        const player = new Tone.Player(newTrack.instrumentLocation).toDestination();
+        setPlayers(players => ({
+            ...players,
+            [newInstrumentName]: player,
+        }));
 
         // Add the track to the state
         dispatch({type: 'SwitchInstuments', payload: { oldTrack, newTrack }});
@@ -195,13 +426,32 @@ const DrumMachine = () => {
         }
     }, [isPlaying]);
 
+    const availableCategories : string[] = Array.from(new Set(state.availableTracks.map(item => item.category)));
+    const sortedCategories = availableCategories.sort();
+
     return (
         <div id="drum-machine">
-            {/* Button Container */}
-            <button onClick={() => setIsPlaying(!isPlaying)}>{isPlaying ? 'Stop' : 'Play'}</button>
+            {/* Header */}
+            <h1>The Ultimate Drum Machine</h1>
 
-            {/* BPM Setter */}
-            <input type="number" onChange={(event) => setBpm(parseFloat(event.target.value))} value={bpm} />
+            {/* Controls */}
+            <ControlsContainer
+                toggleIsPlaying={toggleIsPlaying}
+                isPlaying={isPlaying}
+                changeBpm={changeBpm}
+                bpm={bpm} />
+
+            {/* Add Track */}
+            <select className="capitalize" ref={trackCategoryRef}>
+                {sortedCategories.map((item, index) =>
+                    <option
+                        className="capitalize"
+                        key={index}
+                        value={item}>
+                    {item}
+                    </option>)}
+            </select>
+            <button onClick={addTrack} disabled={state.availableTracks.length <= 0}>Add Track</button>
 
             {/* Track Container */}
             <div id="track-container">
@@ -210,27 +460,18 @@ const DrumMachine = () => {
                         key={index}
                         trackName={track.displayName}
                         instrumentLocation={track.instrumentLocation}
+                        category={track.category}
                         currentBeat={beatNum}
                         toggleBeat={(beatCount) => toggleBeat(track.displayName, beatCount)}
                         switchInstruments={switchInstruments}
                         deleteTrack={deleteTrack}
                         beats={track.beats}
                         state={state}
-                        setPlayers={setPlayers}
+                        playersRef={playersRef}
                         isPlaying={isPlaying} />)}
             </div>
-
-            {/* Add Track */}
-            <button onClick={addTrack} disabled={state.availableTracks.length <= 0}>Add Track</button>
         </div>
     )
 }
 
 export default DrumMachine
-
-// {/* Track Container */}
-// <div id="track-container">
-//     <Track trackName={"Kick"} toggleBeat={(beatCount) => toggleBeat("kick", beatCount)} beats={state.kick.beats}/>
-//     <Track trackName={"Snare"} toggleBeat={(beatCount) => toggleBeat("snare", beatCount)} beats={state.snare.beats}/>
-//     <Track trackName={"Hi-Hat"} toggleBeat={(beatCount) => toggleBeat("hihat", beatCount)} beats={state.hihat.beats}/>
-// </div>

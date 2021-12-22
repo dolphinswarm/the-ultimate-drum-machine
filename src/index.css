@@ -1,12 +1,31 @@
+/* FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+
 .beat {
     height: 50px;
     width: 50px;
     display: inline-block;
-    margin: 10px;
+    margin: 5px;
 }
 
 .track {
+    margin: auto;
+    text-align: center;
     background-color: lightgray;
-    width: 1200px;
+    width: 90%;
     padding: 10px;
+}
+
+#drum-machine {
+    margin: auto;
+    text-align: center;
+    font-family: 'Righteous', cursive;
+    background-color: gray;
+    width: 1200px;
+    border-radius: 10px;
+    box-shadow: 0 0 0 3px #000, 0 0 0 6px rgb(53, 53, 53), 0 0 0 9px #000;
+}
+
+.capitalize {
+    text-transform: capitalize;
 }
