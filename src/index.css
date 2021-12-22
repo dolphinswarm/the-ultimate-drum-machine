@@ -1,9 +1,13 @@
 /* FONTS */
 @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 
+body {
+    background-color: #222;
+}
+
 .beat {
-    height: 50px;
-    width: 50px;
+    height: 45px;
+    width: 45px;
     display: inline-block;
     margin: 5px;
 }
@@ -13,19 +17,123 @@
     text-align: center;
     background-color: lightgray;
     width: 90%;
-    padding: 10px;
+    padding: 15px;
 }
 
 #drum-machine {
-    margin: auto;
+    margin: 50px auto;
     text-align: center;
     font-family: 'Righteous', cursive;
-    background-color: gray;
-    width: 1200px;
+    background-color: #111;
+    width: 1280px;
     border-radius: 10px;
-    box-shadow: 0 0 0 3px #000, 0 0 0 6px rgb(53, 53, 53), 0 0 0 9px #000;
+    box-shadow: 0 0 0 6px #000, 0 0 0 12px rgb(53, 53, 53), 0 0 0 18px #000;
 }
 
 .capitalize {
     text-transform: capitalize;
+}
+
+.instrument-icon {
+    width: 50px;
+}
+
+.track-title {
+    padding: 0px;
+    margin: 0px;
+}
+
+.title-subtext {
+    font-weight: lighter;
+    font-size: 14px;
+}
+.title-maintext {
+    font-weight: bolder;
+    font-size: 18px;
+}
+
+.track-controls {
+    width: 13%;
+    display: inline-block;
+    padding: 0px;
+    margin: 0px;
+    text-align: left;
+}
+
+.track-beats {
+    width: 81%;
+    display: inline-block;
+    padding: 0px;
+    margin: 0px;
+    text-align: left;
+}
+
+.track-control-section {
+    margin: 10px 0px;
+}
+
+.track-icon {
+    vertical-align: top;
+    margin-top: 60px;
+    width: 5%;
+    padding-right: 10px;
+    display: inline-block;
+}
+
+.machine-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.woofer {
+    max-width: 150px;
+    border: 10px black solid;
+    border-radius: 50%;
+}
+
+.woofer-container {
+    flex: 1 1 0px;
+}
+
+.machine-title {
+    font-size: 50px;
+    flex: 1 1 0px;
+    color: red;
+    text-shadow:
+    -1px -1px 0 white,
+    1px -1px 0 white,
+    -1px 1px 0 white,
+    1px 1px 0 white;  
+}
+
+.woofer-animated {
+    animation: shake 0.25s;
+    animation-iteration-count: infinite;
+}
+  
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+#start-label {
+    width: 600px;
+    color: white;
+    margin: auto;
+    font-size: 24px;
+    font-weight: 100;
+}
+
+#track-container {
+    padding: 30px;
 }

@@ -1,6 +1,9 @@
 import React from 'react'
 import Beat from './Beat'
 import * as Tone from 'tone'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type TrackProps = {
     trackName: string,
@@ -42,14 +45,52 @@ const Track = ({trackName, instrumentLocation, category, currentBeat, deleteTrac
         playersRef.current[trackName].volume.value = volume;
     }, [volume]);
 
+    const getImageSource = (): string => {
+        switch (category) {
+            case "kick":
+                return "img/kick.png";
+            case "snare":
+            case "tom":
+                return "img/snare.png";
+            case "hihat":
+                return "img/hihat.png";
+            case "ride":
+            case "crash":
+                return "img/crash.png";
+            case "clap":
+                return "img/clap.png";
+            case "fx":
+                return "img/fx.png";
+            case "accessory":
+                return "img/accessory.png";
+            default:
+                return "MEOW";
+        }
+    }
+
     return (
         <div className="track">
-            {/* Track Title */}
-            <h3>{trackName}</h3>
+            {/* Icon */}
+            <div className="track-icon">
+                <img src={getImageSource()} className="instrument-icon"/>
+            </div>
 
+            {/* Track Controls and Info */}
             <div className="track-controls">
+                {/* Track Title */}
+                <div className="track-title">
+                    <span className="title-maintext">{trackName}</span>&nbsp;
+                    <span className="title-subtext">({category})</span>
+                </div>
+
                 {/* Dropdown For Track */}
-                <select value={trackName} onChange={(event) => switchInstruments(trackName, event.target.value)}>
+                <div className="track-control-section">
+                <label htmlFor={`${trackName}-instrumentchange`}>Current Instrument:</label><br />
+                <select
+                    value={trackName}
+                    name={`${trackName}-instrumentchange`}
+                    onChange={(event) => switchInstruments(trackName, event.target.value)}>
+
                     {allTracks.map((track, index) =>
                         <option
                             key={index}
@@ -58,15 +99,26 @@ const Track = ({trackName, instrumentLocation, category, currentBeat, deleteTrac
                         {track.displayName}
                         </option>)}
                 </select>
+                </div>
 
                 {/* Volume Slider */}
-                <input type="range" min="-20" max="20" value={volume} step="0.1" onChange={(event) => setVolume(Math.round(parseFloat(event.target.value) * 10) / 10) } />
+                <div className="track-control-section">
+                <label htmlFor={`${trackName}-volume`}>Volume:</label><br />
+                <input
+                    type="range"
+                    min="-20" max="20" step="0.1"
+                    value={volume}
+                    name={`${trackName}-volume`}
+                    onChange={(event) => setVolume(Math.round(parseFloat(event.target.value) * 10) / 10) } />
+                </div>
 
                 {/* Delete Track */}
-                <button onClick={() => deleteTrack(trackName)}>Delete Track</button>
-
+                <button onClick={() => deleteTrack(trackName)}>
+                    <FontAwesomeIcon icon={faTrash} />
+                </button>
             </div>
 
+            <div className="track-beats">
             {beats.map((isEnabled, beatCount) => 
                 <Beat
                     key={beatCount}
@@ -75,6 +127,7 @@ const Track = ({trackName, instrumentLocation, category, currentBeat, deleteTrac
                     isEnabled={isEnabled}
                     toggleBeat={toggleBeat}
                     isPlaying={isPlaying} />)}
+            </div>
         </div>
     )
 }

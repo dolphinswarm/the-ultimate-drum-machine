@@ -11,6 +11,16 @@ type ControlProps = {
 };
 
 const ControlsContainer = ({toggleIsPlaying, isPlaying, changeBpm, bpm} : ControlProps) => {
+
+    const [localBPM, setLocalBPM] = React.useState(bpm.toString());
+    const invalidChars = [ "-", "+", "e" ];
+
+    const changeLocalBPM = (bpm: string) => {; setLocalBPM(bpm); }
+
+    React.useEffect(() => {
+        changeLocalBPM(bpm.toString());
+    }, [bpm])
+
     return (
         <div id="controls-container">
             {/* Button Container */}
@@ -19,7 +29,11 @@ const ControlsContainer = ({toggleIsPlaying, isPlaying, changeBpm, bpm} : Contro
             </button>
 
             {/* BPM Setter */}
-            <input type="number" onChange={(event) => changeBpm(event.target.value)} value={bpm} />
+            <input type="number" min="30" max="240"
+                onBlur={() => changeBpm(localBPM) }
+                onChange={(event) => changeLocalBPM(event.target.value)}
+                onKeyDown={(event) => { if (invalidChars.includes(event.key)) event.preventDefault(); }}
+                value={localBPM}/>
         </div>
     )
 }

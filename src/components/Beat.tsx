@@ -4,9 +4,22 @@ type BeatProps = { beatCount: number; currentBeat: number, toggleBeat: (beatCoun
 
 const Beat = ({beatCount, currentBeat, toggleBeat, isEnabled, isPlaying} : BeatProps) => {
 
+    const backgroundColor = () => {
+        if (isPlaying && currentBeat === beatCount) return 'blue';
+        else
+        {
+            if (beatCount % 4 === 0) {
+                return isEnabled ? 'darkgreen' : 'gray';
+            }
+            else {
+                return isEnabled ? 'green' : 'darkgray';
+            }
+        }
+    }
+
     return (
         <div className='beat'
-            style={{'backgroundColor': isPlaying && currentBeat === beatCount ? 'blue' : isEnabled ? 'green' : 'gray'}}
+            style={{'backgroundColor': backgroundColor()}}
             onDoubleClick={() => toggleBeat(beatCount)}>
         </div>
     )

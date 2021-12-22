@@ -2,6 +2,7 @@ import React from 'react'
 import Track from './Track'
 import * as Tone from 'tone'
 import ControlsContainer from './ControlsContainer';
+import HeaderContainer from './HeaderContainer';
 
 // type DrumMachineProps = {play: void};
 
@@ -173,21 +174,99 @@ const DrumMachine = () => {
                 category: "clap",
                 instrumentLocation: "/sample/clap/clap-5.wav",
             },
-            // ================ RIDES
+            // ================ FX
             {
                 displayName: "Cat",
                 category: "fx",
                 instrumentLocation: "/sample/fx/meow-1.wav",
             },
             {
-                displayName: "Crash Cymbal 1",
+                displayName: "Hey!",
+                category: "fx",
+                instrumentLocation: "/sample/fx/hey-1.wav",
+            },
+            {
+                displayName: "Laser",
+                category: "fx",
+                instrumentLocation: "/sample/fx/laser-1.wav",
+            },
+            {
+                displayName: "Orchestra Hit",
+                category: "fx",
+                instrumentLocation: "/sample/fx/orchestra-hit-1.wav",
+            },
+            {
+                displayName: "Record Scratch",
+                category: "fx",
+                instrumentLocation: "/sample/fx/record-scratch-1.wav",
+            },
+            {
+                displayName: "Telephone",
+                category: "fx",
+                instrumentLocation: "/sample/fx/telephone-1.wav",
+            },
+            {
+                displayName: "Yeah!",
+                category: "fx",
+                instrumentLocation: "/sample/fx/yeah-1.wav",
+            },
+            // ================ CRASHES
+            {
+                displayName: "Acoustic Crash Cymbal",
                 category: "crash",
                 instrumentLocation: "/sample/crash/crash-1.wav",
             },
             {
-                displayName: "Ride Cymbal 1",
+                displayName: "Orchestral Crash Cymbal",
+                category: "crash",
+                instrumentLocation: "/sample/crash/crash-2.wav",
+            },
+            {
+                displayName: "Hip-Hop Crash Cymbal",
+                category: "crash",
+                instrumentLocation: "/sample/crash/crash-3.wav",
+            },
+            // ================ RIDES
+            {
+                displayName: "Acoustic Ride Cymbal",
                 category: "ride",
                 instrumentLocation: "/sample/ride/ride-1.wav",
+            },
+            {
+                displayName: "Hip-Hop Ride Cymbal #1",
+                category: "ride",
+                instrumentLocation: "/sample/ride/ride-2.wav",
+            },
+            {
+                displayName: "Hip-Hop Ride Cymbal #2",
+                category: "ride",
+                instrumentLocation: "/sample/ride/ride-3.wav",
+            },
+            // ================ TOMS
+            {
+                displayName: "Acoustic Tom (Low)",
+                category: "tom",
+                instrumentLocation: "/sample/tom/tom-low-1.wav",
+            },
+            {
+                displayName: "Synth Tom (Low)",
+                category: "tom",
+                instrumentLocation: "/sample/tom/tom-synth-1.wav",
+            },
+            {
+                displayName: "Hip-Hop Tom (Low)",
+                category: "tom",
+                instrumentLocation: "/sample/tom/tom-synth-2.wav",
+            },
+            {
+                displayName: "Hip-Hop Tom (Middle)",
+                category: "tom",
+                instrumentLocation: "/sample/tom/tom-synth-3.wav",
+            },
+            {
+                displayName: "Hip-Hop Tom (High)",
+                category: "tom",
+                instrumentLocation: "/sample/tom/tom-synth-4.wav",
             },
             // ================ ACCESSORIES
             {
@@ -234,6 +313,16 @@ const DrumMachine = () => {
                 displayName: "Triangle",
                 category: "accessory",
                 instrumentLocation: "/sample/accessories/triangle-1.wav",
+            },
+            {
+                displayName: "Click",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/click-1.wav",
+            },
+            {
+                displayName: "Clave",
+                category: "accessory",
+                instrumentLocation: "/sample/accessories/clave-1.wav",
             },
         ],
     }
@@ -301,7 +390,16 @@ const DrumMachine = () => {
     /**
      * Change the BPM.
      */
-    const changeBpm = (bpm) => { setBpm(parseFloat(bpm)); }
+    const changeBpm = (bpm: string) => {
+        let bpmNum = 120;
+        if (bpm) {
+            bpmNum = parseFloat(bpm);
+            if (bpmNum < 30) bpmNum = 30;
+            if (bpmNum > 240) bpmNum = 240;
+        }
+            
+        setBpm(bpmNum);
+    }
 
     /**
      * Adds a track to the list of tracks.
@@ -429,10 +527,13 @@ const DrumMachine = () => {
     const availableCategories : string[] = Array.from(new Set(state.availableTracks.map(item => item.category)));
     const sortedCategories = availableCategories.sort();
 
+    const isPlayingNoteCurrently = isPlaying && state.inUseTracks.filter(track => track.beats[beatNum] === true).length !== 0;
+    const showStart = state.inUseTracks.length === 0;
+
     return (
         <div id="drum-machine">
             {/* Header */}
-            <h1>The Ultimate Drum Machine</h1>
+            <HeaderContainer isPlaying={isPlayingNoteCurrently} />
 
             {/* Controls */}
             <ControlsContainer
@@ -455,6 +556,9 @@ const DrumMachine = () => {
 
             {/* Track Container */}
             <div id="track-container">
+                <p id="start-label" style={{"display": showStart ? "block" : "none" }}>
+                {showStart ? "You can start making beats by selecting a track category then clicking \"Add Track\" above!" : ""}
+                </p>
                 {state.inUseTracks.map((track, index) =>
                     <Track
                         key={index}
