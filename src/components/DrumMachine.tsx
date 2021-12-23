@@ -377,7 +377,16 @@ const DrumMachine = () => {
         // Get the old track
         const updatedTrack = state.inUseTracks.filter((track) => track.displayName === trackName)[0];
         const prev = updatedTrack.beats[beatCount];
-        updatedTrack.beats[beatCount] = !prev;
+        switch (prev)
+        {
+            case 0:
+            case 1:
+                updatedTrack.beats[beatCount] = prev + 1;
+                break;
+            case 2:
+                updatedTrack.beats[beatCount] = 0;
+                break;
+        }
 
         dispatch({type: 'ToggleBeat', payload: {updatedTrack}})
     }
@@ -416,7 +425,7 @@ const DrumMachine = () => {
         const newTrack = {
             ...availableTrack,
             id: sortOrder,
-            beats: new Array(16).fill(false),
+            beats: new Array(16).fill(0),
         }
 
         // Increment the sort order
@@ -455,7 +464,7 @@ const DrumMachine = () => {
         // Set the track beats and sort number
         newTrack.beats = oldTrack.beats;
         newTrack.id = oldTrack.id;
-        oldTrack.beats = new Array(16).fill(false);
+        oldTrack.beats = new Array(16).fill(0);
         oldTrack.id = null;
 
         // Create a new track
@@ -488,7 +497,20 @@ const DrumMachine = () => {
                 // Check if we have a beat. if so, play it
                 if (track.beats[beat]) {
                     // players[index].triggerAttackRelease('C4', '16n', time);
-                    sound?.start(time); 
+                    // sound?.start(time);
+
+                    // NORMAL BEAT
+                    if (track.beats[beat] === 1)
+                    {
+                        sound?.start(time);
+                    }
+                    // ROLL
+                    else if (track.beats[beat] === 2)
+                    {
+                        sound?.start();
+                        sound?.start('+64n');
+                        sound?.start('+32n');
+                    }
                 }
             })
 
@@ -527,7 +549,7 @@ const DrumMachine = () => {
     const availableCategories : string[] = Array.from(new Set(state.availableTracks.map(item => item.category)));
     const sortedCategories = availableCategories.sort();
 
-    const isPlayingNoteCurrently = isPlaying && state.inUseTracks.filter(track => track.beats[beatNum] === true).length !== 0;
+    const isPlayingNoteCurrently = isPlaying && state.inUseTracks.filter(track => track.beats[beatNum]).length !== 0;
     const showStart = state.inUseTracks.length === 0;
 
     return (

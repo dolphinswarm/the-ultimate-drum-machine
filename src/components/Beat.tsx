@@ -1,18 +1,28 @@
 import React from 'react'
 
-type BeatProps = { beatCount: number; currentBeat: number, toggleBeat: (beatCount: number)=>void; isEnabled: boolean, isPlaying: boolean };
+type BeatProps = {
+    beatCount: number;
+    currentBeat: number,
+    toggleBeat: (beatCount: number)=>void;
+    beatState: number,
+    isPlaying: boolean
+};
 
-const Beat = ({beatCount, currentBeat, toggleBeat, isEnabled, isPlaying} : BeatProps) => {
+const Beat = ({beatCount, currentBeat, toggleBeat, beatState, isPlaying} : BeatProps) => {
 
     const backgroundColor = () => {
         if (isPlaying && currentBeat === beatCount) return 'blue';
         else
         {
             if (beatCount % 4 === 0) {
-                return isEnabled ? 'darkgreen' : 'gray';
+                return beatState > 0 ?
+                    (beatState === 1 ? 'darkgreen' : 'darkgoldenrod') :
+                    'gray';
             }
             else {
-                return isEnabled ? 'green' : 'darkgray';
+                return beatState > 0 ?
+                    (beatState === 1 ? 'green' : 'goldenrod') :
+                    'darkgray';
             }
         }
     }

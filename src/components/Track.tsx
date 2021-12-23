@@ -13,7 +13,7 @@ type TrackProps = {
     deleteTrack: (trackName: string)=>void,
     toggleBeat: (beatCount: number)=>void,
     switchInstruments: any // FIX ME!! TODO
-    beats: Array<boolean>,
+    beats: Array<number>,
     state: any,
     playersRef: any, // FIX ME TODO
     isPlaying: boolean // FIX ME!! TODO
@@ -148,7 +148,7 @@ const Track = ({trackName, instrumentLocation, category, currentBeat, deleteTrac
                     key={beatCount}
                     beatCount={beatCount}
                     currentBeat={currentBeat}
-                    isEnabled={isEnabled}
+                    beatState={isEnabled}
                     toggleBeat={toggleBeat}
                     isPlaying={isPlaying} />)}
             </div>
