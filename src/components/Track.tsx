@@ -68,8 +68,32 @@ const Track = ({trackName, instrumentLocation, category, currentBeat, deleteTrac
         }
     }
 
+    const getBackgroundColor = (): string => {
+        switch (category) {
+            case "kick":
+                return "#200000";
+            case "snare":
+                return "#002000";
+            case "tom":
+                return "#000020"
+            case "hihat":
+                return "#200020"
+            case "ride":
+            case "crash":
+                return "#002020"
+            case "clap":
+                return "#202000"
+            case "fx":
+                return "#200040";
+            case "accessory":
+                return "#202040";
+            default:
+                return "#202020";
+        }
+    }
+
     return (
-        <div className="track">
+        <div className="track" style={{"backgroundColor": getBackgroundColor()}}>
             {/* Icon */}
             <div className="track-icon">
                 <img src={getImageSource()} className="instrument-icon"/>

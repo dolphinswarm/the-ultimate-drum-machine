@@ -1,8 +1,8 @@
 /* FONTS */
-@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&family=Righteous&display=swap');
 
 body {
-    background-color: #222;
+    background-color: #111;
 }
 
 .beat {
@@ -15,19 +15,22 @@ body {
 .track {
     margin: auto;
     text-align: center;
-    background-color: lightgray;
-    width: 90%;
-    padding: 15px;
+    width: 100%;
+    color: white;
+    font-family: 'Fira Sans', sans-serif;
+    border-bottom: #111 1px solid;
+    border-radius: 10px;
 }
 
 #drum-machine {
     margin: 50px auto;
     text-align: center;
     font-family: 'Righteous', cursive;
-    background-color: #111;
+    background-color: #222;
     width: 1280px;
     border-radius: 10px;
-    box-shadow: 0 0 0 6px #000, 0 0 0 12px rgb(53, 53, 53), 0 0 0 18px #000;
+    box-shadow: 0 0 0 4px #000, 0 0 0 8px rgb(53, 53, 53), 0 0 0 12px #000;
+    padding-bottom: 20px;
 }
 
 .capitalize {
@@ -41,6 +44,7 @@ body {
 .track-title {
     padding: 0px;
     margin: 0px;
+    white-space: nowrap;
 }
 
 .title-subtext {
@@ -49,19 +53,21 @@ body {
 }
 .title-maintext {
     font-weight: bolder;
-    font-size: 18px;
+    font-size: 22px;
 }
 
 .track-controls {
     width: 13%;
     display: inline-block;
     padding: 0px;
+    padding-left: 10px;
     margin: 0px;
     text-align: left;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .track-beats {
-    width: 81%;
+    width: 80%;
     display: inline-block;
     padding: 0px;
     margin: 0px;
@@ -75,9 +81,9 @@ body {
 .track-icon {
     vertical-align: top;
     margin-top: 60px;
-    width: 5%;
-    padding-right: 10px;
+    width: 6%;
     display: inline-block;
+    filter: invert(1);
 }
 
 .machine-header {
@@ -87,9 +93,12 @@ body {
 }
 
 .woofer {
-    max-width: 150px;
+    max-width: 250px;
+    border: 3px black solid;
+    /*
     border: 10px black solid;
     border-radius: 50%;
+    */
 }
 
 .woofer-container {
@@ -132,8 +141,14 @@ body {
     margin: auto;
     font-size: 24px;
     font-weight: 100;
+    padding: 20px;
 }
 
 #track-container {
-    padding: 30px;
+    width: 90%;
+    margin: 30px auto;
+    padding: px;
+    border-radius: 10px;
+    box-shadow: 0 0 0 4px #000, 0 0 0 8px rgb(53, 53, 53), 0 0 0 12px #000;
+    background-color: #0F0F0F;
 }

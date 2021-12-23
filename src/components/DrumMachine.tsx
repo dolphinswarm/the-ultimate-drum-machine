@@ -131,7 +131,7 @@ const DrumMachine = () => {
             {
                 displayName: "Acoustic Open Hi-Hat",
                 category: "hihat",
-                instrumentLocation: "/sample/hihat/hihat-open-1.wav",
+                instrumentLocation: "/sample/hihat/hihat-open-5.wav",
             },
             {
                 displayName: "Trap Open Hi-Hat #1",
