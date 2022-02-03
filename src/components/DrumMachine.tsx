@@ -3,6 +3,7 @@ import Track from './Track'
 import * as Tone from 'tone'
 import ControlsContainer from './ControlsContainer';
 import HeaderContainer from './HeaderContainer';
+import { DragDropContext, Droppable, DropResult, } from 'react-beautiful-dnd';
 
 // type DrumMachineProps = {play: void};
 
@@ -13,6 +14,7 @@ const DrumMachine = () => {
     // ==============================   
     const [beatNum, setBeatNum] = React.useState(0);
     const [players, setPlayers] = React.useState({});
+    const [effects, setEffects] = React.useState({});
     const [sortOrder, setSortOrder] = React.useState(1);
     const [bpm, setBpm] = React.useState(120);
     const [isPlaying, setIsPlaying] = React.useState(false);
@@ -329,6 +331,11 @@ const DrumMachine = () => {
 
     const reducer = (state, action) => {
         switch (action.type) {
+            case 'ReorderInUseTracks':
+                return {
+                    ...state,
+                    inUseTracks: action.payload
+                };
             case 'ToggleBeat':
                 return {
                     ...state,
@@ -359,6 +366,8 @@ const DrumMachine = () => {
 
     const playersRef = React.useRef(players);
     playersRef.current = players;
+    const effectsRef = React.useRef(effects);
+    effectsRef.current = effects;
     const beatRef = React.useRef(beatNum);
     beatRef.current = beatNum;
     const stateRef = React.useRef(state);
@@ -380,8 +389,12 @@ const DrumMachine = () => {
         switch (prev)
         {
             case 0:
-            case 1:
                 updatedTrack.beats[beatCount] = prev + 1;
+                break;
+            case 1:
+                updatedTrack.category === "hihat" ?
+                    updatedTrack.beats[beatCount] = prev + 1 :
+                    updatedTrack.beats[beatCount] = 0;
                 break;
             case 2:
                 updatedTrack.beats[beatCount] = 0;
@@ -411,6 +424,14 @@ const DrumMachine = () => {
     }
 
     /**
+     * Change the effects.
+     */
+    const changeEffect = (effectName: string, value: number) => {
+        // Set the volume of the effect
+        effectsRef.current[effectName].volume.value = value;
+    }
+
+    /**
      * Adds a track to the list of tracks.
      */
     const addTrack = (): void => {
@@ -433,6 +454,12 @@ const DrumMachine = () => {
 
         // Create a new track
         const player = new Tone.Player(newTrack.instrumentLocation).toDestination();
+        const playerChannel = new Tone.Channel().toDestination();
+		playerChannel.send("chorus");
+		playerChannel.send("distortion");
+		playerChannel.send("reverb");
+		player.connect(playerChannel);
+        
         setPlayers(players => ({
             ...players,
             [availableTrack.displayName]: player,
@@ -469,6 +496,12 @@ const DrumMachine = () => {
 
         // Create a new track
         const player = new Tone.Player(newTrack.instrumentLocation).toDestination();
+        const playerChannel = new Tone.Channel().toDestination();
+		playerChannel.send("chorus");
+		playerChannel.send("distortion");
+		playerChannel.send("reverb");
+		player.connect(playerChannel);
+        
         setPlayers(players => ({
             ...players,
             [newInstrumentName]: player,
@@ -477,6 +510,23 @@ const DrumMachine = () => {
         // Add the track to the state
         dispatch({type: 'SwitchInstuments', payload: { oldTrack, newTrack }});
     }
+
+    const onDragEnd = (result: DropResult) => {
+        const { source, destination } = result;
+        
+        // If no destination, stop running
+        if (!destination || destination.index === source.index) return;
+
+        const tracks = state.inUseTracks;
+        const [removed] = tracks.splice(source.index, 1);
+        tracks.splice(destination.index, 0, removed);
+
+        tracks.forEach((track, index) => {
+            track.id = index + 1;
+        });
+
+        dispatch({type: 'ReorderInUseTracks', payload: tracks });
+    };
 
     /**
      * UseEffect hook for playing the audio.
@@ -505,7 +555,7 @@ const DrumMachine = () => {
                         sound?.start(time);
                     }
                     // ROLL
-                    else if (track.beats[beat] === 2)
+                    else if (track.beats[beat] === 2 && track.category === "hihat")
                     {
                         sound?.start();
                         sound?.start('+64n');
@@ -529,6 +579,33 @@ const DrumMachine = () => {
     React.useEffect(() => { Tone.Transport.bpm.value = bpm; }, [bpm]);
 
     /**
+     * UseEffect hook for changing the song's effects on load.
+     */
+    React.useEffect(() => {
+        // Create a new chorus effect
+        const chorus = new Tone.Chorus({
+			wet: 1,
+		}).toDestination().start();
+		const chorusChannel = new Tone.Channel({ volume: -60 }).connect(chorus);
+		chorusChannel.receive("chorus");
+
+        // Create new cheby effect
+		const cheby = new Tone.Chebyshev(50).toDestination();
+		const chebyChannel = new Tone.Channel({ volume: -60 }).connect(cheby);
+		chebyChannel.receive("distortion");
+
+        // Create new reverb channel
+		const reverb = new Tone.Reverb(3).toDestination();
+		const reverbChannel = new Tone.Channel({ volume: -60 }).connect(reverb);
+		reverbChannel.receive("reverb");
+
+        // Add the channels to state
+        effects["chorus"] = chorusChannel;
+        effects["distortion"] = chebyChannel;
+        effects["reverb"] = reverbChannel;
+    }, []);
+
+    /**
      * UseEffect hook to begin or stop Tone.JS when the isPlaying state is toggled.
      */
     React.useEffect(() => {
@@ -550,9 +627,9 @@ const DrumMachine = () => {
     const sortedCategories = availableCategories.sort();
 
     const isPlayingNoteCurrently = isPlaying && state.inUseTracks.filter(track => track.beats[beatNum]).length !== 0;
-    const showStart = state.inUseTracks.length === 0;
 
     return (
+        <DragDropContext onDragEnd={onDragEnd}>
         <div id="drum-machine">
             {/* Header */}
             <HeaderContainer isPlaying={isPlayingNoteCurrently} />
@@ -562,7 +639,9 @@ const DrumMachine = () => {
                 toggleIsPlaying={toggleIsPlaying}
                 isPlaying={isPlaying}
                 changeBpm={changeBpm}
-                bpm={bpm} />
+                bpm={bpm}
+                effects={effectsRef.current}
+                changeEffect={changeEffect} />
 
             {/* Add Track */}
             <select className="capitalize" ref={trackCategoryRef}>
@@ -578,25 +657,33 @@ const DrumMachine = () => {
 
             {/* Track Container */}
             <div id="track-container">
-                <p id="start-label" style={{"display": showStart ? "block" : "none" }}>
-                {showStart ? "You can start making beats by selecting a track category then clicking \"Add Track\" above!" : ""}
-                </p>
-                {state.inUseTracks.map((track, index) =>
-                    <Track
-                        key={index}
-                        trackName={track.displayName}
-                        instrumentLocation={track.instrumentLocation}
-                        category={track.category}
-                        currentBeat={beatNum}
-                        toggleBeat={(beatCount) => toggleBeat(track.displayName, beatCount)}
-                        switchInstruments={switchInstruments}
-                        deleteTrack={deleteTrack}
-                        beats={track.beats}
-                        state={state}
-                        playersRef={playersRef}
-                        isPlaying={isPlaying} />)}
+                {state.inUseTracks.length === 0 ? <p id="start-label">You can start making beats by selecting a track category then clicking "Add Track" above!</p> : null}
+                <Droppable droppableId="drum-machine-tracks">
+                    {(provided) => (
+                    <div id="track-list"
+                        {...provided.droppableProps}
+                        ref={provided.innerRef} >
+                    {state.inUseTracks.map((track, index) =>
+                        <Track
+                            key={track.displayName}
+                            index={index}
+                            trackName={track.displayName}
+                            instrumentLocation={track.instrumentLocation}
+                            category={track.category}
+                            currentBeat={beatNum}
+                            toggleBeat={(beatCount) => toggleBeat(track.displayName, beatCount)}
+                            switchInstruments={switchInstruments}
+                            deleteTrack={deleteTrack}
+                            beats={track.beats}
+                            state={state}
+                            playersRef={playersRef}
+                            isPlaying={isPlaying} />)}
+                    {provided.placeholder}
+                    </div>)}
+                </Droppable>
             </div>
         </div>
+        </DragDropContext>
     )
 }
 

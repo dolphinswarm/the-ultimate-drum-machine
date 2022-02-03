@@ -20,6 +20,13 @@ body {
     font-family: 'Fira Sans', sans-serif;
     border-bottom: #111 1px solid;
     border-radius: 10px;
+    user-select: none;
+    background-color: #202020;
+}
+
+#track-list {
+    list-style-type: none;
+    padding: 0;
 }
 
 #drum-machine {
@@ -63,11 +70,12 @@ body {
     padding-left: 10px;
     margin: 0px;
     text-align: left;
-    background-color: rgba(0, 0, 0, 0.4);
+    /* background-color: rgba(0, 0, 0, 0.4); */
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.4) 60%, transparent);
 }
 
 .track-beats {
-    width: 80%;
+    width: 79%;
     display: inline-block;
     padding: 0px;
     margin: 0px;
@@ -76,6 +84,21 @@ body {
 
 .track-control-section {
     margin: 10px 0px;
+}
+
+.track-drag {
+    vertical-align: top;
+    margin-top: 80px;
+    width: 1%;
+    display: inline-block;
+}
+
+.track-drag svg {
+    width: 11.5px !important;
+}
+
+.track-drag svg:hover {
+    cursor: move;
 }
 
 .track-icon {
@@ -151,4 +174,37 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 0 4px #000, 0 0 0 8px rgb(53, 53, 53), 0 0 0 12px #000;
     background-color: #0F0F0F;
+}
+
+.track-kick {
+    background-color: #200000;
+}
+
+.track-snare {
+    background-color: #002000;
+}
+
+.track-tom {
+    background-color: #000020;
+}
+
+.track-hihat {
+    background-color: #200020;
+}
+
+.track-hihat,
+.track-crash {
+    background-color: #002020;
+}
+
+.track-clap {
+    background-color: #202000;
+}
+
+.track-fx {
+    background-color: #200040;
+}
+
+.track-accessory {
+    background-color: #202040;
 }
