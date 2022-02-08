@@ -14,6 +14,7 @@ type TrackProps = {
     currentBeat: number,
     deleteTrack: (trackName: string)=>void,
     toggleBeat: (beatCount: number)=>void,
+    changeTrackVolume: (trackName: string, volume: number)=>void,
     switchInstruments: any // FIX ME!! TODO
     beats: Array<number>,
     state: any,
@@ -21,7 +22,7 @@ type TrackProps = {
     isPlaying: boolean // FIX ME!! TODO
 };
 
-const Track = ({index, trackName, instrumentLocation, category, currentBeat, deleteTrack, toggleBeat, switchInstruments, beats, state, playersRef, isPlaying} : TrackProps) => {
+const Track = ({index, trackName, instrumentLocation, category, currentBeat, deleteTrack, toggleBeat, changeTrackVolume, switchInstruments, beats, state, playersRef, isPlaying} : TrackProps) => {
 
     const disableSelectionOfTrack = (track): boolean => {
         // If this is the current track, don't disable
@@ -41,11 +42,6 @@ const Track = ({index, trackName, instrumentLocation, category, currentBeat, del
     });
 
     allTracks = allTracks.filter((track) => track.category === category);
-    
-    const [volume, setVolume] = React.useState(0);
-    React.useEffect(() => {
-        playersRef.current[trackName].volume.value = volume;
-    }, [volume]);
 
     const getImageSource = (): string => {
         switch (category) {
@@ -119,9 +115,9 @@ const Track = ({index, trackName, instrumentLocation, category, currentBeat, del
                     <input
                         type="range"
                         min="-20" max="20" step="0.1"
-                        value={volume}
+                        value={playersRef.current[trackName].volume.value}
                         name={`${trackName}-volume`}
-                        onChange={(event) => setVolume(Math.round(parseFloat(event.target.value) * 10) / 10) } />
+                        onChange={(event) => changeTrackVolume(trackName, Math.round(parseFloat(event.target.value) * 10) / 10) } />
                     </div>
 
                     {/* Delete Track */}

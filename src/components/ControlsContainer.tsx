@@ -2,24 +2,26 @@ import React from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlay, faStop } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import FileInputButton from './FileInputButton';
+import FileExportButton from './FileExportButton';
 
 type ControlProps = {
     toggleIsPlaying: ()=>void,
     isPlaying: boolean,
     changeBpm: (val: string)=>void,
     bpm: number,
-    effects: any,
-    changeEffect: (effect: string, value: number)=>void,
+    state: any,
+    effectsRef: any,
+    changeEffectVolume: (effect: string, value: number)=>void,
+    readToStateFromJSONFile: (state: object)=>void
 };
 
-const ControlsContainer = ({toggleIsPlaying, isPlaying, changeBpm, bpm, effects, changeEffect} : ControlProps) => {
+const ControlsContainer = ({toggleIsPlaying, isPlaying, changeBpm, bpm, state, effectsRef, changeEffectVolume, readToStateFromJSONFile} : ControlProps) => {
 
     const [localBPM, setLocalBPM] = React.useState(bpm.toString());
     const invalidChars = [ "-", "+", "e" ];
 
     const changeLocalBPM = (bpm: string) => {; setLocalBPM(bpm); }
-
-    const x = effects;
 
     React.useEffect(() => {
         changeLocalBPM(bpm.toString());
@@ -39,38 +41,26 @@ const ControlsContainer = ({toggleIsPlaying, isPlaying, changeBpm, bpm, effects,
                 onKeyDown={(event) => { if (invalidChars.includes(event.key)) event.preventDefault(); }}
                 value={localBPM}/>
 
-            {/* Reverb Slider */}
+            {/* Slider for each effect */}
             <div className="track-control-section">
-            <label htmlFor="reverb">Reverb:</label><br />
-            <input
-                type="range"
-                min="-60" max="6" step="0.1"
-                value={effects["reverb"]?.volume.value ?? -60}
-                name="reverb"
-                onChange={(event) => changeEffect("reverb", parseFloat(event.target.value)) } />
+            {state.effects.map((effect) => 
+                <div key={effect.displayName}>
+                    <label htmlFor={effect.displayName}>{`${effect.displayName}:`}</label><br />
+                    <input
+                        type="range"
+                        min="-60" max="6" step="0.1"
+                        value={effect.volume}
+                        name={effect.displayName}
+                        onChange={(event) => changeEffectVolume(effect.displayName, parseFloat(event.target.value)) } />
+                </div>
+            )}
             </div>
 
-            {/* Reverb Slider */}
-            <div className="track-control-section">
-            <label htmlFor="chorus">Chorus:</label><br />
-            <input
-                type="range"
-                min="-60" max="6" step="0.1"
-                value={effects["chorus"]?.volume.value ?? -60}
-                name="chorus"
-                onChange={(event) => changeEffect("chorus", parseFloat(event.target.value)) } />
-            </div>
 
-            {/* Reverb Slider */}
-            <div className="track-control-section">
-            <label htmlFor="distortion">Distortion:</label><br />
-            <input
-                type="range"
-                min="-60" max="6" step="0.1"
-                value={effects["distortion"]?.volume.value ?? -60}
-                name="distortion"
-                onChange={(event) => changeEffect("distortion", parseFloat(event.target.value)) } />
-            </div>
+            {/* Import / Export State */}
+            <FileInputButton readToStateFromJSONFile={readToStateFromJSONFile} />
+            <FileExportButton state={state} />
+
         </div>
     )
 }

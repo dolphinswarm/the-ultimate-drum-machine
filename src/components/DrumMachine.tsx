@@ -327,6 +327,23 @@ const DrumMachine = () => {
                 instrumentLocation: "/sample/accessories/clave-1.wav",
             },
         ],
+        effects: [
+            {
+                id: 1,
+                displayName: "Reverb",
+                volume: -60
+            },
+            {
+                id: 2,
+                displayName: "Distortion",
+                volume: -60
+            },
+            {
+                id: 3,
+                displayName: "Chorus",
+                volume: -60
+            },
+        ],
     }
 
     const reducer = (state, action) => {
@@ -336,6 +353,18 @@ const DrumMachine = () => {
                     ...state,
                     inUseTracks: action.payload
                 };
+            case 'ChangeTrackVolume':
+                return {
+                    ...state,
+                    inUseTracks: [...state.inUseTracks.filter(_ => _.displayName !== action.payload.updatedTrack.displayName), 
+                        action.payload.updatedTrack].sort((a,b) => a.id - b.id)
+                };
+            case 'ChangeEffectVolume':
+                return {
+                    ...state,
+                    effects: [...state.effects.filter(_ => _.displayName !== action.payload.updatedEffect.displayName), 
+                        action.payload.updatedEffect].sort((a,b) => a.id - b.id)
+                };
             case 'ToggleBeat':
                 return {
                     ...state,
@@ -344,18 +373,27 @@ const DrumMachine = () => {
                 };
             case 'AddTrack':
                 return {
+                    ...state,
                     inUseTracks: [...state.inUseTracks, action.payload.newTrack].sort((a,b) => a.id - b.id),
                     availableTracks: [...state.availableTracks.filter(_ => _.displayName !== action.payload.newTrack.displayName)]
                 };
             case 'SwitchInstuments':
                 return {
+                    ...state,
                     inUseTracks: [...state.inUseTracks.filter(_ => _.displayName !== action.payload.oldTrack.displayName), action.payload.newTrack].sort((a,b) => a.id - b.id),
                     availableTracks: [...state.availableTracks.filter(_ => _.displayName !== action.payload.newTrack.displayName), action.payload.oldTrack],
                 };
             case 'DeleteTrack':
                 return {
+                    ...state,
                     inUseTracks: [...state.inUseTracks.filter(_ => _.displayName !== action.payload.track.displayName)],
                     availableTracks: [...state.availableTracks, action.payload.track]
+                };
+            case 'ImportStateFromJSON':
+                return {
+                    inUseTracks: action.payload.inUseTracks,
+                    availableTracks: action.payload.availableTracks,
+                    effects: action.payload.effects,
                 };
             default:
                 throw new Error();
@@ -405,6 +443,34 @@ const DrumMachine = () => {
     }
 
     /**
+     * Change the volume of a track
+     */
+    const changeTrackVolume = (trackName: string, volume: number) => {
+        // Get the old track
+        const updatedTrack = state.inUseTracks.filter((track) => track.displayName === trackName)[0];
+
+        // Change the volume to the new volume
+        updatedTrack.volume = volume;
+
+        // Update the state
+        dispatch({type: 'ChangeTrackVolume', payload: {updatedTrack}})
+    }
+
+    /**
+     * Change the volume of a track
+     */
+    const changeEffectVolume = (effectName: string, volume: number) => {
+        // Get the old track
+        const updatedEffect = state.effects.filter((track) => track.displayName === effectName)[0];
+
+        // Change the volume to the new volume
+        updatedEffect.volume = volume;
+
+        // Update the state
+        dispatch({type: 'ChangeEffectVolume', payload: {updatedEffect}})
+    }
+
+    /**
      * Toggle play / stop of the machine.
      */
     const toggleIsPlaying = () => { setIsPlaying(!isPlaying); }
@@ -423,21 +489,23 @@ const DrumMachine = () => {
         setBpm(bpmNum);
     }
 
-    /**
-     * Change the effects.
-     */
-    const changeEffect = (effectName: string, value: number) => {
-        // Set the volume of the effect
-        effectsRef.current[effectName].volume.value = value;
+    const readToStateFromJSONFile = (state: object) => {
+        // Update the state
+        dispatch({type: 'ImportStateFromJSON', payload: state})
     }
+
+    /**
+     * Change the track volume.
+     */
+    // const changeTrackVolume = (trackName: string, value: number) => {
+    //     // Set the volume of the track
+    //     playersRef.current[trackName].volume.value = value;
+    // }
 
     /**
      * Adds a track to the list of tracks.
      */
     const addTrack = (): void => {
-        // Get the first available track, if any
-        // const availableTrack = state.availableTracks[0];
-
         // Get the first available track of a selected category, if any
         const category = trackCategoryRef.current.value;
         const availableTrack = state.availableTracks.filter((item) => item.category === category)[0];
@@ -446,6 +514,7 @@ const DrumMachine = () => {
         const newTrack = {
             ...availableTrack,
             id: sortOrder,
+            volume: 0,
             beats: new Array(16).fill(0),
         }
 
@@ -600,10 +669,26 @@ const DrumMachine = () => {
 		reverbChannel.receive("reverb");
 
         // Add the channels to state
-        effects["chorus"] = chorusChannel;
-        effects["distortion"] = chebyChannel;
-        effects["reverb"] = reverbChannel;
+        setEffects(
+            {
+                "Chorus": chorusChannel,
+                "Distortion": chebyChannel,
+                "Reverb": reverbChannel,
+            }
+        );
     }, []);
+
+    React.useEffect(() => {
+        state.inUseTracks.forEach(item => {
+            playersRef.current[item.displayName].volume.value = item.volume;
+        });
+        if (Object.keys(effectsRef.current).length !== 0)
+        {
+            state.effects.forEach(item => {
+                effectsRef.current[item.displayName].volume.value = item.volume;
+            });
+        }    
+    }, [state]);
 
     /**
      * UseEffect hook to begin or stop Tone.JS when the isPlaying state is toggled.
@@ -628,6 +713,8 @@ const DrumMachine = () => {
 
     const isPlayingNoteCurrently = isPlaying && state.inUseTracks.filter(track => track.beats[beatNum]).length !== 0;
 
+    // console.log(JSON.stringify(state));
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
         <div id="drum-machine">
@@ -640,8 +727,10 @@ const DrumMachine = () => {
                 isPlaying={isPlaying}
                 changeBpm={changeBpm}
                 bpm={bpm}
-                effects={effectsRef.current}
-                changeEffect={changeEffect} />
+                state={state}
+                effectsRef={effectsRef}
+                changeEffectVolume={changeEffectVolume}
+                readToStateFromJSONFile={readToStateFromJSONFile} />
 
             {/* Add Track */}
             <select className="capitalize" ref={trackCategoryRef}>
@@ -674,6 +763,7 @@ const DrumMachine = () => {
                             toggleBeat={(beatCount) => toggleBeat(track.displayName, beatCount)}
                             switchInstruments={switchInstruments}
                             deleteTrack={deleteTrack}
+                            changeTrackVolume={changeTrackVolume}
                             beats={track.beats}
                             state={state}
                             playersRef={playersRef}
