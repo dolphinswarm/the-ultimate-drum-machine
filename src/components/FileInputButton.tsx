@@ -1,6 +1,11 @@
-import React from 'react';
+import React from "react";
+import { DrumMachineState } from "../Types";
 
-const FileInputButton = ({readToStateFromJSONFile} : {readToStateFromJSONFile: (state: object)=>void }) => {
+const FileInputButton = ({
+    readToStateFromJSONFile,
+}: {
+    readToStateFromJSONFile: (state: DrumMachineState) => void;
+}) => {
     const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     const importState = (event) => {
@@ -11,8 +16,7 @@ const FileInputButton = ({readToStateFromJSONFile} : {readToStateFromJSONFile: (
         // Check if the extension is .txt
         const extension = fileName.split(".").pop();
         const isSupported = ["txt"].includes(extension);
-        if (!isSupported)
-        {
+        if (!isSupported) {
             alert("Invalid file format. Please only submit .txt files!");
             return;
         }
@@ -24,20 +28,28 @@ const FileInputButton = ({readToStateFromJSONFile} : {readToStateFromJSONFile: (
         fileReader.readAsText(file, "UTF-8");
 
         try {
-            fileReader.onload = e => {
+            fileReader.onload = (e) => {
                 const result = e.target?.result;
-                readToStateFromJSONFile(JSON.parse(result as string));
-            }
+                const json = JSON.parse(result as string);
+                readToStateFromJSONFile(json);
+            };
+        } catch (exception) {
+            alert("Something went wrong parsing the .txt file!");
         }
-        catch (exception) {
-            alert("Something went wrong parsing the .txt file!")
-        }
-    }
+    };
 
     return (
         <div>
-            <button onClick={() => fileInputRef.current!.click()}>Import</button>
-            <input ref={fileInputRef} type="file" style={{display: "none"}} accept="text/plain" onChange={importState} />
+            <button onClick={() => fileInputRef.current!.click()}>
+                Import
+            </button>
+            <input
+                ref={fileInputRef}
+                type="file"
+                style={{ display: "none" }}
+                accept="text/plain"
+                onChange={importState}
+            />
         </div>
     );
 };

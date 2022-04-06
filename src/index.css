@@ -1,5 +1,5 @@
 /* FONTS */
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&family=Righteous&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&family=Righteous&display=swap");
 
 body {
     background-color: #111;
@@ -17,7 +17,7 @@ body {
     text-align: center;
     width: 100%;
     color: white;
-    font-family: 'Fira Sans', sans-serif;
+    font-family: "Fira Sans", sans-serif;
     border-bottom: #111 1px solid;
     border-radius: 10px;
     user-select: none;
@@ -32,7 +32,7 @@ body {
 #drum-machine {
     margin: 50px auto;
     text-align: center;
-    font-family: 'Righteous', cursive;
+    font-family: "Righteous", cursive;
     background-color: #222;
     width: 1280px;
     border-radius: 10px;
@@ -63,6 +63,11 @@ body {
     font-size: 22px;
 }
 
+.effect-maintext {
+    font-weight: normal;
+    font-size: 20px;
+}
+
 .track-controls {
     width: 13%;
     display: inline-block;
@@ -71,7 +76,11 @@ body {
     margin: 0px;
     text-align: left;
     /* background-color: rgba(0, 0, 0, 0.4); */
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.4) 60%, transparent);
+    background-image: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.4) 60%,
+        transparent
+    );
 }
 
 .track-beats {
@@ -132,30 +141,49 @@ body {
     font-size: 50px;
     flex: 1 1 0px;
     color: red;
-    text-shadow:
-    -1px -1px 0 white,
-    1px -1px 0 white,
-    -1px 1px 0 white,
-    1px 1px 0 white;  
+    text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white,
+        1px 1px 0 white;
 }
 
 .woofer-animated {
     animation: shake 0.25s;
     animation-iteration-count: infinite;
 }
-  
+
 @keyframes shake {
-    0% { transform: translate(1px, 1px) rotate(0deg); }
-    10% { transform: translate(-1px, -2px) rotate(-1deg); }
-    20% { transform: translate(-3px, 0px) rotate(1deg); }
-    30% { transform: translate(3px, 2px) rotate(0deg); }
-    40% { transform: translate(1px, -1px) rotate(1deg); }
-    50% { transform: translate(-1px, 2px) rotate(-1deg); }
-    60% { transform: translate(-3px, 1px) rotate(0deg); }
-    70% { transform: translate(3px, 1px) rotate(-1deg); }
-    80% { transform: translate(-1px, -1px) rotate(1deg); }
-    90% { transform: translate(1px, 2px) rotate(0deg); }
-    100% { transform: translate(1px, -2px) rotate(-1deg); }
+    0% {
+        transform: translate(1px, 1px) rotate(0deg);
+    }
+    10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+    }
+    20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+    }
+    30% {
+        transform: translate(3px, 2px) rotate(0deg);
+    }
+    40% {
+        transform: translate(1px, -1px) rotate(1deg);
+    }
+    50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+    }
+    60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+    }
+    70% {
+        transform: translate(3px, 1px) rotate(-1deg);
+    }
+    80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+    }
+    90% {
+        transform: translate(1px, 2px) rotate(0deg);
+    }
+    100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+    }
 }
 
 #start-label {
@@ -170,10 +198,21 @@ body {
 #track-container {
     width: 90%;
     margin: 30px auto;
-    padding: px;
     border-radius: 10px;
     box-shadow: 0 0 0 4px #000, 0 0 0 8px rgb(53, 53, 53), 0 0 0 12px #000;
-    background-color: #0F0F0F;
+    background-color: #0f0f0f;
+}
+
+#effects-container {
+    width: 90%;
+    margin: 30px auto;
+    border-radius: 10px;
+    box-shadow: 0 0 0 4px #000, 0 0 0 8px rgb(53, 53, 53), 0 0 0 12px #000;
+    background-color: #0f0f0f;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
 }
 
 .track-kick {
@@ -207,4 +246,31 @@ body {
 
 .track-accessory {
     background-color: #202040;
+}
+
+.effect {
+    color: white;
+    width: 24.8%;
+    border: 1px white solid;
+    border-radius: 10px;
+    background-color: #181818;
+}
+
+.effect-controls {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.effect-controls label {
+    font-size: 16px;
+    font-weight: lighter;
+}
+
+.effect-label {
+    width: 25px;
+    font-family: "Fira Sans", sans-serif;
+    font-weight: bold;
+    background-color: black;
+    color: white;
+    user-select: none;
 }

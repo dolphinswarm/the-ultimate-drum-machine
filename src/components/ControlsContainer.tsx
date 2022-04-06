@@ -1,31 +1,37 @@
-import React from 'react'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPlay, faStop } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import FileInputButton from './FileInputButton';
-import FileExportButton from './FileExportButton';
+import React from "react";
+import { faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import FileInputButton from "./FileInputButton";
+import FileExportButton from "./FileExportButton";
+import { DrumMachineState } from "../Types";
 
 type ControlProps = {
-    toggleIsPlaying: ()=>void,
-    isPlaying: boolean,
-    changeBpm: (val: string)=>void,
-    bpm: number,
-    state: any,
-    effectsRef: any,
-    changeEffectVolume: (effect: string, value: number)=>void,
-    readToStateFromJSONFile: (state: object)=>void
+    toggleIsPlaying: () => void;
+    isPlaying: boolean;
+    changeBpm: (val: string) => void;
+    bpm: number;
+    state: DrumMachineState;
+    readToStateFromJSONFile: (state: DrumMachineState) => void;
 };
 
-const ControlsContainer = ({toggleIsPlaying, isPlaying, changeBpm, bpm, state, effectsRef, changeEffectVolume, readToStateFromJSONFile} : ControlProps) => {
+const ControlsContainer = ({
+    toggleIsPlaying,
+    isPlaying,
+    changeBpm,
+    bpm,
+    state,
+    readToStateFromJSONFile,
+}: ControlProps) => {
+    const [localBPM, setLocalBPM] = React.useState(bpm.toString() ?? "");
+    const invalidChars = ["-", "+", "e"];
 
-    const [localBPM, setLocalBPM] = React.useState(bpm.toString());
-    const invalidChars = [ "-", "+", "e" ];
-
-    const changeLocalBPM = (bpm: string) => {; setLocalBPM(bpm); }
+    const changeLocalBPM = (bpm: string) => {
+        setLocalBPM(bpm);
+    };
 
     React.useEffect(() => {
         changeLocalBPM(bpm.toString());
-    }, [bpm])
+    }, [bpm]);
 
     return (
         <div id="controls-container">
@@ -35,34 +41,26 @@ const ControlsContainer = ({toggleIsPlaying, isPlaying, changeBpm, bpm, state, e
             </button>
 
             {/* BPM Setter */}
-            <input type="number" min="30" max="240"
-                onBlur={() => changeBpm(localBPM) }
+            <input
+                type="number"
+                min="30"
+                max="240"
+                onBlur={() => changeBpm(localBPM)}
                 onChange={(event) => changeLocalBPM(event.target.value)}
-                onKeyDown={(event) => { if (invalidChars.includes(event.key)) event.preventDefault(); }}
-                value={localBPM}/>
-
-            {/* Slider for each effect */}
-            <div className="track-control-section">
-            {state.effects.map((effect) => 
-                <div key={effect.displayName}>
-                    <label htmlFor={effect.displayName}>{`${effect.displayName}:`}</label><br />
-                    <input
-                        type="range"
-                        min="-60" max="6" step="0.1"
-                        value={effect.volume}
-                        name={effect.displayName}
-                        onChange={(event) => changeEffectVolume(effect.displayName, parseFloat(event.target.value)) } />
-                </div>
-            )}
-            </div>
-
+                onKeyDown={(event) => {
+                    if (invalidChars.includes(event.key))
+                        event.preventDefault();
+                }}
+                value={localBPM}
+            />
 
             {/* Import / Export State */}
-            <FileInputButton readToStateFromJSONFile={readToStateFromJSONFile} />
+            <FileInputButton
+                readToStateFromJSONFile={readToStateFromJSONFile}
+            />
             <FileExportButton state={state} />
-
         </div>
-    )
-}
+    );
+};
 
-export default ControlsContainer
+export default ControlsContainer;

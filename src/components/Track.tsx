@@ -1,50 +1,44 @@
-import React from 'react'
-import Beat from './Beat'
-import * as Tone from 'tone'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTrash, faEllipsisV } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Draggable } from 'react-beautiful-dnd';
+import React from "react";
+import Beat from "./Beat";
+import { faTrash, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Draggable } from "react-beautiful-dnd";
+import { AvailableTrack, DrumMachineState, InUseTrack } from "../Types";
 
 type TrackProps = {
-    index: number,
-    trackName: string,
-    instrumentLocation: string,
-    category: string,
-    currentBeat: number,
-    deleteTrack: (trackName: string)=>void,
-    toggleBeat: (beatCount: number)=>void,
-    changeTrackVolume: (trackName: string, volume: number)=>void,
-    switchInstruments: any // FIX ME!! TODO
-    beats: Array<number>,
-    state: any,
-    playersRef: any, // FIX ME TODO
-    isPlaying: boolean // FIX ME!! TODO
+    index: number;
+    track: InUseTrack;
+    tracksInCategory: { trackName: string; inUse: boolean }[];
+    currentBeat: number;
+    playersRef: React.MutableRefObject<{}>;
+    isPlaying: boolean;
+    switchInstruments: (
+        originalInstrumentName: string,
+        newInstrumentName: string
+    ) => void;
+    changeTrackVolume: (trackName: string, volume: number) => void;
+    deleteTrack: (trackName: string) => void;
+    toggleBeat: (beatCount: number) => void;
 };
 
-const Track = ({index, trackName, instrumentLocation, category, currentBeat, deleteTrack, toggleBeat, changeTrackVolume, switchInstruments, beats, state, playersRef, isPlaying} : TrackProps) => {
-
-    const disableSelectionOfTrack = (track): boolean => {
-        // If this is the current track, don't disable
-        if (track.displayName === trackName)
-            return false;
-
-        // If this track isn't selected, don't disable
-        const names = state.availableTracks.map((track) => track.displayName);
-        if (names.includes(track.displayName))
-            return false;
-
-        return true;
-    }
-
-    let allTracks = [...state.inUseTracks, ...state.availableTracks].sort((a, b) => {
-        return a.displayName.localeCompare(b.displayName);
-    });
-
-    allTracks = allTracks.filter((track) => track.category === category);
-
+const Track = ({
+    index,
+    track,
+    tracksInCategory,
+    currentBeat,
+    playersRef,
+    isPlaying,
+    switchInstruments,
+    changeTrackVolume,
+    deleteTrack,
+    toggleBeat,
+}: TrackProps) => {
+    /**
+     * Gets the source of an image, given its category
+     * @returns The local source of an image, as a string
+     */
     const getImageSource = (): string => {
-        switch (category) {
+        switch (track.category) {
             case "kick":
                 return "img/kick.png";
             case "snare":
@@ -62,83 +56,131 @@ const Track = ({index, trackName, instrumentLocation, category, currentBeat, del
             case "accessory":
                 return "img/accessory.png";
             default:
-                return "MEOW";
+                return "img/accessory.png";
         }
-    }
+    };
 
     return (
-        <Draggable draggableId={trackName} index={index}>
+        <Draggable draggableId={track.displayName} index={index}>
             {(provided) => (
-            <div className={`track track-${category}`}
-                ref={provided.innerRef}
-                {...provided.draggableProps} >
-
-                {/* Icon */}
-                <div className="track-drag" {...provided.dragHandleProps}>
-                    <FontAwesomeIcon icon={faEllipsisV} />
-                </div>
-                
-                {/* Icon */}
-                <div className="track-icon">
-                    <img src={getImageSource()} className="instrument-icon" alt="track-icon" />
-                </div>
-
-                {/* Track Controls and Info */}
-                <div className="track-controls">
-                    {/* Track Title */}
-                    <div className="track-title">
-                        <span className="title-maintext">{trackName}</span>&nbsp;
-                        <span className="title-subtext">({category})</span>
+                <div
+                    className={`track track-${track.category}`}
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                >
+                    {/* Icon */}
+                    <div className="track-drag" {...provided.dragHandleProps}>
+                        <FontAwesomeIcon icon={faEllipsisV} />
                     </div>
 
-                    {/* Dropdown For Track */}
-                    <div className="track-control-section">
-                    <label htmlFor={`${trackName}-instrumentchange`}>Current Instrument:</label><br />
-                    <select
-                        value={trackName}
-                        name={`${trackName}-instrumentchange`}
-                        onChange={(event) => switchInstruments(trackName, event.target.value)}>
+                    {/* Icon */}
+                    <div className="track-icon">
+                        <img
+                            src={getImageSource()}
+                            className="instrument-icon"
+                            alt="track-icon"
+                        />
+                    </div>
 
-                        {allTracks.map((track, index) =>
-                            <option
-                                key={index}
+                    {/* Track Controls and Info */}
+                    <div className="track-controls">
+                        {/* Track Title */}
+                        <div className="track-title">
+                            <span className="title-maintext">
+                                {track.displayName}
+                            </span>
+                            &nbsp;
+                            <span className="title-subtext">
+                                ({track.category})
+                            </span>
+                        </div>
+
+                        {/* Dropdown For Track */}
+                        <div className="track-control-section">
+                            <label
+                                htmlFor={`${track.displayName}-instrumentchange`}
+                            >
+                                Select Instrument:
+                            </label>
+                            <br />
+                            <select
                                 value={track.displayName}
-                                disabled={disableSelectionOfTrack(track)}>
-                            {track.displayName}
-                            </option>)}
-                    </select>
+                                name={`${track.displayName}-instrumentchange`}
+                                onChange={(event) =>
+                                    switchInstruments(
+                                        track.displayName,
+                                        event.target.value
+                                    )
+                                }
+                            >
+                                {/* Loop through all the tracks in the catgory */}
+                                {tracksInCategory.map(
+                                    (categoryTrack, index) => (
+                                        <option
+                                            key={index + 1}
+                                            value={categoryTrack.trackName}
+                                            disabled={
+                                                categoryTrack.inUse &&
+                                                categoryTrack.trackName !==
+                                                    track.displayName
+                                            }
+                                        >
+                                            {categoryTrack.trackName}
+                                        </option>
+                                    )
+                                )}
+                            </select>
+                        </div>
+
+                        {/* Volume Slider */}
+                        <div className="track-control-section">
+                            <label htmlFor={`${track.displayName}-volume`}>
+                                Volume:
+                            </label>
+                            <br />
+                            <input
+                                type="range"
+                                min="-20"
+                                max="20"
+                                step="0.1"
+                                value={
+                                    playersRef.current[track.displayName].volume
+                                        .value
+                                }
+                                name={`${track.displayName}-volume`}
+                                onChange={(event) =>
+                                    changeTrackVolume(
+                                        track.displayName,
+                                        Math.round(
+                                            parseFloat(event.target.value) * 10
+                                        ) / 10
+                                    )
+                                }
+                            />
+                        </div>
+
+                        {/* Delete Track */}
+                        <button onClick={() => deleteTrack(track.displayName)}>
+                            <FontAwesomeIcon icon={faTrash} />
+                        </button>
                     </div>
 
-                    {/* Volume Slider */}
-                    <div className="track-control-section">
-                    <label htmlFor={`${trackName}-volume`}>Volume:</label><br />
-                    <input
-                        type="range"
-                        min="-20" max="20" step="0.1"
-                        value={playersRef.current[trackName].volume.value}
-                        name={`${trackName}-volume`}
-                        onChange={(event) => changeTrackVolume(trackName, Math.round(parseFloat(event.target.value) * 10) / 10) } />
+                    <div className="track-beats">
+                        {track.beats.map((isEnabled, beatCount) => (
+                            <Beat
+                                key={beatCount}
+                                beatCount={beatCount}
+                                currentBeat={currentBeat}
+                                beatState={isEnabled}
+                                toggleBeat={toggleBeat}
+                                isPlaying={isPlaying}
+                            />
+                        ))}
                     </div>
-
-                    {/* Delete Track */}
-                    <button onClick={() => deleteTrack(trackName)}>
-                        <FontAwesomeIcon icon={faTrash} />
-                    </button>
                 </div>
-
-                <div className="track-beats">
-                {beats.map((isEnabled, beatCount) => 
-                    <Beat
-                        key={beatCount}
-                        beatCount={beatCount}
-                        currentBeat={currentBeat}
-                        beatState={isEnabled}
-                        toggleBeat={toggleBeat}
-                        isPlaying={isPlaying} />)}
-                </div>
-            </div>)}
+            )}
         </Draggable>
-    )
-}
+    );
+};
 
-export default Track
+export default Track;
