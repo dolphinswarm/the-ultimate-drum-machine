@@ -5,7 +5,7 @@ import {
     PayloadAction,
 } from "@reduxjs/toolkit";
 import { getInitialState } from "../hooks/getInitialState";
-import { Effect } from "tone/build/esm/effect/Effect";
+import { convertArrayToRecord } from "../utils/DataStructureUtils";
 
 const initialState: DrumMachineState = getInitialState();
 
@@ -16,42 +16,34 @@ export const drumMachineStateSlice = createSlice({
     reducers: {
         // Add a new track to the machine
         addTrack: (state, action: PayloadAction<InUseTrack>) => {
-            state.inUseTracks = [...state.inUseTracks, action.payload];
-            state.availableTracks = state.availableTracks.filter(
-                (_) => _.displayName !== action.payload.displayName
-            );
+            state.inUseTracks[action.payload.displayName] = action.payload;
+            delete state.availableTracks[action.payload.displayName];
         },
         // Remove an existing track from the machine
         removeTrack: (state, action: PayloadAction<InUseTrack>) => {
-            state.availableTracks = [...state.availableTracks, action.payload];
-            state.inUseTracks = state.inUseTracks.filter(
-                (_) => _.displayName !== action.payload.displayName
-            );
+            state.availableTracks[action.payload.displayName] = action.payload;
+            delete state.inUseTracks[action.payload.displayName];
         },
         // Toggle a beat on / off
         // (this is handled by the function)
         toggleBeat: (state, action: PayloadAction<InUseTrack>) => {
-            state.inUseTracks = state.inUseTracks.map((track) => {
-                return track.displayName === action.payload.displayName
-                    ? action.payload
-                    : track;
-            });
+            state.inUseTracks[action.payload.displayName] = action.payload;
         },
         // Reorder / sort the tracks
         // (this is handled by the function)
         reorderInUseTracks: (state, action: PayloadAction<InUseTrack[]>) => {
-            state.inUseTracks = action.payload;
+            // state.inUseTracks = convertArrayToRecord(action.payload, "displayName");
         },
         // Change the volume of a track
         changeTrackVolume: (
             state,
             action: PayloadAction<{ trackName: string; volume: number }>
         ) => {
-            state.inUseTracks = state.inUseTracks.map((track) => {
-                return track.displayName === action.payload.trackName
-                    ? { ...track, volume: action.payload.volume }
-                    : track;
-            });
+            // state.inUseTracks = state.inUseTracks.map((track) => {
+            //     return track.displayName === action.payload.trackName
+            //         ? { ...track, volume: action.payload.volume }
+            //         : track;
+            // });
         },
         // Change the parameter of an effect
         changeEffectParam: (
@@ -63,11 +55,11 @@ export const drumMachineStateSlice = createSlice({
             }>
         ) => {
             // Get the effect we want to modify
-            state.effects = state.effects.map((track) => {
-                return track.displayName === action.payload.effectName
-                    ? { ...track, volume: action.payload.volume }
-                    : track;
-            });
+            // state.effects = state.effects.map((effect) => {
+            //     return effect.displayName === action.payload.effectName
+            //         ? { ...track, : action.payload.volume }
+            //         : track;
+            // });
         },
         setBPM: (state, action: PayloadAction<number>) => {
             state.bpm = action.payload;
@@ -79,27 +71,15 @@ export const drumMachineStateSlice = createSlice({
                 newTrack: InUseTrack;
             }>
         ) => {
-            // Get the position of the old track and swap it with the new track
-            const pos = state.inUseTracks.findIndex(
-                (_) => _.displayName === action.payload.oldTrack.displayName
-            );
-            const tmpArray = state.inUseTracks.slice();
-            tmpArray[pos] = action.payload.newTrack;
+            // Remove the old track
+            state.availableTracks[action.payload.oldTrack.displayName] =
+                action.payload.oldTrack;
+            delete state.inUseTracks[action.payload.oldTrack.displayName];
 
-            // Add the new track to the in-use state and remove the old track
-            state.inUseTracks = tmpArray.filter(
-                (track) =>
-                    track.displayName !== action.payload.oldTrack.displayName
-            );
-
-            // Add the old track to the available state and remove the new track
-            state.availableTracks = [
-                ...state.availableTracks,
-                action.payload.oldTrack,
-            ].filter(
-                (track) =>
-                    track.displayName !== action.payload.newTrack.displayName
-            );
+            // Add the new track
+            state.inUseTracks[action.payload.newTrack.displayName] =
+                action.payload.newTrack;
+            delete state.availableTracks[action.payload.newTrack.displayName];
         },
         // Import state from JSON
         importStateFromJSON: (

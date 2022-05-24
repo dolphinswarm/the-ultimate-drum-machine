@@ -31,12 +31,12 @@ const TracksContainer = ({
 }: TracksContainerProps) => {
     // Make a reduced list of all the tracks
     const allTracks = [
-        ...state.inUseTracks.map((_) => ({
+        ...Object.values(state.inUseTracks).map((_) => ({
             trackName: _.displayName,
             category: _.category,
             inUse: true,
         })),
-        ...state.availableTracks.map((_) => ({
+        ...Object.values(state.availableTracks).map((_) => ({
             trackName: _.displayName,
             category: _.category,
             inUse: false,
@@ -60,7 +60,9 @@ const TracksContainer = ({
         anyAvailableTracks: boolean;
     }[] = allCategories.map((_) => ({
         name: _,
-        anyAvailableTracks: state.availableTracks.some((i) => i.category === _),
+        anyAvailableTracks: Object.values(state.availableTracks).some(
+            (i) => i.category === _
+        ),
     }));
 
     const trackCategoryRef = React.useRef<HTMLSelectElement>(null);
@@ -124,7 +126,9 @@ const TracksContainer = ({
                                     ?.value as InstrumentCategory
                             )
                         }
-                        disabled={state.availableTracks.length <= 0}
+                        disabled={
+                            Object.values(state.availableTracks).length <= 0
+                        }
                     >
                         Add Track
                     </button>
@@ -133,7 +137,7 @@ const TracksContainer = ({
 
             {/* Track Container */}
             <div id="track-container">
-                {state.inUseTracks.length === 0 ? (
+                {Object.values(state.inUseTracks).length === 0 ? (
                     <p id="start-label">
                         You can start making beats by selecting a track category
                         then clicking "Add Track" above!
@@ -146,35 +150,42 @@ const TracksContainer = ({
                             {...provided.droppableProps}
                             ref={provided.innerRef}
                         >
-                            {state.inUseTracks.map((track, index) => (
-                                <Track
-                                    key={track.displayName}
-                                    index={index}
-                                    track={track}
-                                    tracksInCategory={allTracks
-                                        .filter(
-                                            (_) => _.category === track.category
-                                        )
-                                        .map((_) => ({
-                                            trackName: _.trackName,
-                                            inUse: _.inUse,
-                                        }))
-                                        .sort((a, b) =>
-                                            a.trackName.localeCompare(
-                                                b.trackName
+                            {Object.values(state.inUseTracks).map(
+                                (track, index) => (
+                                    <Track
+                                        key={track.displayName}
+                                        index={index}
+                                        track={track}
+                                        tracksInCategory={allTracks
+                                            .filter(
+                                                (_) =>
+                                                    _.category ===
+                                                    track.category
                                             )
-                                        )}
-                                    currentBeat={currentBeat}
-                                    playersRef={playersRef}
-                                    isPlaying={isPlaying}
-                                    switchInstruments={switchInstruments}
-                                    changeTrackVolume={changeTrackVolume}
-                                    deleteTrack={deleteTrack}
-                                    toggleBeat={(beatCount) =>
-                                        toggleBeat(track.displayName, beatCount)
-                                    }
-                                />
-                            ))}
+                                            .map((_) => ({
+                                                trackName: _.trackName,
+                                                inUse: _.inUse,
+                                            }))
+                                            .sort((a, b) =>
+                                                a.trackName.localeCompare(
+                                                    b.trackName
+                                                )
+                                            )}
+                                        currentBeat={currentBeat}
+                                        playersRef={playersRef}
+                                        isPlaying={isPlaying}
+                                        switchInstruments={switchInstruments}
+                                        changeTrackVolume={changeTrackVolume}
+                                        deleteTrack={deleteTrack}
+                                        toggleBeat={(beatCount) =>
+                                            toggleBeat(
+                                                track.displayName,
+                                                beatCount
+                                            )
+                                        }
+                                    />
+                                )
+                            )}
                             {provided.placeholder}
                         </div>
                     )}

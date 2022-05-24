@@ -37,7 +37,7 @@ const EffectsContainer = ({
         <>
             {/* Effects Container */}
             <div id="effects-container">
-                {state.effects.map((effect) => (
+                {Object.values(state.effects).map((effect) => (
                     <div key={effect.displayName} className="effect">
                         {/* Effect Title */}
                         <div className="effect-title">

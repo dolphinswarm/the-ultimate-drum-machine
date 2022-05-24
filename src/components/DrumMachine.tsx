@@ -9,18 +9,12 @@ import {
     AvailableTrack,
     DrumMachineState,
     InstrumentCategory,
-    Effect,
     InUseTrack,
     IToneTrack,
     IToneEffect,
 } from "../Types";
-import {
-    getAvailableTrackByProperty,
-    getInUseTrackByProperty,
-} from "../utils/StateUtils";
 import TracksContainer from "./TracksContainer";
 import EffectsContainer from "./EffectsContainer";
-import { LFOEffect } from "tone/build/esm/effect/LFOEffect";
 
 // type DrumMachineProps = {play: void};
 
@@ -59,27 +53,25 @@ const DrumMachine = () => {
      */
     const toggleBeat = (trackName: string, beatCount: number) => {
         // Get the old track
-        const updatedTrack = {
-            ...getInUseTrackByProperty("displayName", trackName, state),
-        };
+        const updatedTrack = { ...state.inUseTracks[trackName] };
         const prev = updatedTrack.beats[beatCount];
 
-        const beatsCopy = [...updatedTrack.beats];
+        const newBeats = [...updatedTrack.beats];
         // Toggle the beat type
         switch (prev) {
             case 0:
-                beatsCopy[beatCount] = prev + 1;
+                newBeats[beatCount] = prev + 1;
                 break;
             case 1:
                 updatedTrack.category === "hihat"
-                    ? (beatsCopy[beatCount] = prev + 1)
-                    : (beatsCopy[beatCount] = 0);
+                    ? (newBeats[beatCount] = prev + 1)
+                    : (newBeats[beatCount] = 0);
                 break;
             case 2:
-                beatsCopy[beatCount] = 0;
+                newBeats[beatCount] = 0;
                 break;
         }
-        updatedTrack.beats = beatsCopy;
+        updatedTrack.beats = newBeats;
 
         // Update the state
         dispatch(actions.toggleBeat(updatedTrack));
@@ -139,23 +131,23 @@ const DrumMachine = () => {
      */
     const readToStateFromJSONFile = (state: DrumMachineState) => {
         // For each in-use track, if a player doesn't exist, create it
-        state.inUseTracks.forEach((track) => {
-            // Create a new track
-            const player = new Tone.Player(
-                track.instrumentLocation
-            ).toDestination();
-            const playerChannel = new Tone.Channel().toDestination();
-            playerChannel.send("chorus");
-            playerChannel.send("distortion");
-            playerChannel.send("reverb");
-            playerChannel.send("bitcrush");
-            player.connect(playerChannel);
+        // state.inUseTracks.forEach((track) => {
+        //     // Create a new track
+        //     const player = new Tone.Player(
+        //         track.instrumentLocation
+        //     ).toDestination();
+        //     const playerChannel = new Tone.Channel().toDestination();
+        //     playerChannel.send("chorus");
+        //     playerChannel.send("distortion");
+        //     playerChannel.send("reverb");
+        //     playerChannel.send("bitcrush");
+        //     player.connect(playerChannel);
 
-            setPlayers((players) => ({
-                ...players,
-                [track.displayName]: player,
-            }));
-        });
+        //     setPlayers((players) => ({
+        //         ...players,
+        //         [track.displayName]: player,
+        //     }));
+        // });
 
         // Update the state
         dispatch(actions.importStateFromJSON(state));
@@ -165,15 +157,18 @@ const DrumMachine = () => {
      * Adds a track to the list of tracks.
      */
     const addTrack = (category: InstrumentCategory): void => {
-        // Get the first available track of a selected category, if any
-        // const category = trackCategoryRef.current!;
-        const availableTrack = getAvailableTrackByProperty(
-            "category",
-            category,
-            state
+        // Get the available tracks of a selected category
+        const availableTracks = Object.values(state.availableTracks).filter(
+            (_) => _.category === category
         );
 
+        // If nothing in the array return to avoid throwing an error
+        if (!availableTracks || !availableTracks.length) {
+            return;
+        }
+
         // Make a new track
+        const availableTrack = availableTracks[0];
         const newTrack: InUseTrack = {
             ...availableTrack,
             volume: 0,
@@ -220,11 +215,7 @@ const DrumMachine = () => {
      */
     const deleteTrack = (trackName: string): void => {
         // Get the track
-        const trackToDelete = getInUseTrackByProperty(
-            "displayName",
-            trackName,
-            state
-        );
+        const trackToDelete = state.inUseTracks[trackName];
 
         // Add the track to the state
         dispatch(actions.removeTrack(trackToDelete));
@@ -254,22 +245,14 @@ const DrumMachine = () => {
         newInstrumentName: string
     ): void => {
         // Get the old and new tracks from state
-        const originalTrack = getInUseTrackByProperty(
-            "displayName",
-            originalInstrumentName,
-            state
-        );
+        const originalTrack = state.inUseTracks[originalInstrumentName];
 
         const oldTrack: AvailableTrack = {
             ...originalTrack,
         };
 
         const newTrack: InUseTrack = {
-            ...getAvailableTrackByProperty(
-                "displayName",
-                newInstrumentName,
-                state
-            ),
+            ...state.availableTracks[newInstrumentName],
             beats: originalTrack.beats,
             volume: originalTrack.volume,
         };
@@ -295,7 +278,7 @@ const DrumMachine = () => {
         if (!destination || destination.index === source.index) return;
 
         // Make a copy of the tracks in state and splice it
-        const tracks = [...state.inUseTracks];
+        const tracks = [...Object.values(state.inUseTracks)];
         const [removed] = tracks.splice(source.index, 1);
         tracks.splice(destination.index, 0, removed);
 
@@ -313,7 +296,7 @@ const DrumMachine = () => {
             const currentState = stateRef.current;
 
             // For each in use track...
-            currentState.inUseTracks.forEach((track) => {
+            Object.values(currentState.inUseTracks).forEach((track) => {
                 // Get the current beat number and track
                 const sound = playersRef.current[track.displayName];
                 const beat = beatRef.current;
@@ -405,14 +388,14 @@ const DrumMachine = () => {
     }, []);
 
     React.useEffect(() => {
-        state.inUseTracks.forEach((item) => {
-            const player = playersRef.current[item.displayName];
-            if (typeof player !== "undefined")
-                player.volume.value = item.volume ?? 0;
-        });
-        state.effects.forEach((item) => {
-            const effect = effectsRef.current[item.displayName];
-        });
+        // state.inUseTracks.forEach((item) => {
+        //     const player = playersRef.current[item.displayName];
+        //     if (typeof player !== "undefined")
+        //         player.volume.value = item.volume ?? 0;
+        // });
+        // state.effects.forEach((item) => {
+        //     const effect = effectsRef.current[item.displayName];
+        // });
     }, [state]);
 
     /**
@@ -435,7 +418,8 @@ const DrumMachine = () => {
 
     const isPlayingNoteCurrently =
         isPlaying &&
-        state.inUseTracks.filter((track) => track.beats[beatNum]).length !== 0;
+        Object.values(state.inUseTracks).filter((track) => track.beats[beatNum])
+            .length !== 0;
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
