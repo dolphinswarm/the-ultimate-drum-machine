@@ -58,7 +58,7 @@ export type InUseEffect = AvailableEffect & {
 export type DrumMachineState = {
     inUseTracks: Record<string, InUseTrack>;
     availableTracks: Record<string, AvailableTrack>;
-    effects: Record<string, Effect>;
+    // effects: Record<string, Effect>;
     bpm: number;
     /* REMOVING THIS FOR NOW
     inUseEffects: InUseEffect[];

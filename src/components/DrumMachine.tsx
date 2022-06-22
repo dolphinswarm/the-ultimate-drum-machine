@@ -14,7 +14,7 @@ import {
     IToneEffect,
 } from "../Types";
 import TracksContainer from "./TracksContainer";
-import EffectsContainer from "./EffectsContainer";
+// import EffectsContainer from "./EffectsContainer";
 
 // type DrumMachineProps = {play: void};
 
@@ -24,7 +24,7 @@ const DrumMachine = () => {
     // ==============================
     const [beatNum, setBeatNum] = React.useState(0);
     const [players, setPlayers] = React.useState<IToneTrack>({});
-    const [effects, setEffects] = React.useState<IToneEffect>({});
+    // const [effects, setEffects] = React.useState<IToneEffect>({});
     // const [playerChannels, setPlayerChannels] = React.useState({});
     const [isPlaying, setIsPlaying] = React.useState(false);
 
@@ -32,8 +32,8 @@ const DrumMachine = () => {
 
     const playersRef = React.useRef(players);
     playersRef.current = players;
-    const effectsRef = React.useRef(effects);
-    effectsRef.current = effects;
+    // const effectsRef = React.useRef(effects);
+    // effectsRef.current = effects;
     // const playerChannelsRef = React.useRef(playerChannels);
     // playerChannelsRef.current = playerChannels;
     const beatRef = React.useRef(beatNum);
@@ -359,44 +359,58 @@ const DrumMachine = () => {
         //     .start();
         // const chorusChannel = new Tone.Channel({ volume: -60 }).connect(chorus);
         // chorusChannel.receive("chorus");
-
         // // Create new cheby effect
         // const cheby = new Tone.Chebyshev(50).toDestination();
         // const chebyChannel = new Tone.Channel({ volume: -60 }).connect(cheby);
         // chebyChannel.receive("distortion");
-
         // // Create new reverb channel
         // const reverb = new Tone.Reverb(3).toDestination();
         // const reverbChannel = new Tone.Channel({ volume: -60 }).connect(reverb);
         // reverbChannel.receive("reverb");
-
         // // Create new bitcrush channel
         // const bitcrush = new Tone.BitCrusher(4).toDestination();
         // const bitcrushChannel = new Tone.Channel({ volume: -60 }).connect(
         //     bitcrush
         // );
         // bitcrushChannel.receive("bitcrush");
-
-        const reverb = new Tone.Reverb(3).toDestination();
-        const lowpass = new Tone.Filter(800, "lowpass");
-        const highpass = new Tone.Filter(1500, "highpass");
-
-        setEffects({ Reverb: reverb, Lowpass: lowpass, Highpass: highpass });
-
-        // Add all the effects to the Master, in order
-        Tone.Destination.chain(...Object.values(effects));
+        // const reverb = new Tone.Reverb(3).toDestination();
+        // const lowpass = new Tone.Filter(800, "lowpass");
+        // const highpass = new Tone.Filter(1500, "highpass");
+        // setEffects({ Reverb: reverb, Lowpass: lowpass, Highpass: highpass });
+        // // Add all the effects to the Master, in order
+        // Tone.Destination.chain(...Object.values(effects));
     }, []);
 
     React.useEffect(() => {
-        // state.inUseTracks.forEach((item) => {
-        //     const player = playersRef.current[item.displayName];
-        //     if (typeof player !== "undefined")
-        //         player.volume.value = item.volume ?? 0;
+        Object.keys(state.inUseTracks).forEach((trackName) => {
+            const player = playersRef.current[trackName];
+            if (typeof player !== "undefined")
+                player.volume.value = state.inUseTracks[trackName].volume ?? 0;
+        });
+        // Object.keys(state.effects).forEach((effectName) => {
+        //     const effect = effectsRef.current[effectName];
+        //     if (typeof effect !== "undefined") {
+        //         switch (effect.name) {
+        //             case "Reverb":
+        //                 debugger;
+        //                 (effect as Tone.Reverb).decay =
+        //                     state.effects["Reverb"]?.params.find(
+        //                         (_) => _.name === "decay"
+        //                     )?.amount ?? 0.001;
+        //                 (effect as Tone.Reverb).wet.value =
+        //                     state.effects["Reverb"]?.params.find(
+        //                         (_) => _.name === "wet-dry"
+        //                     )?.amount ?? 0.001;
+        //         }
+        //     }
         // });
         // state.effects.forEach((item) => {
         //     const effect = effectsRef.current[item.displayName];
         // });
-    }, [state]);
+    }, [
+        state.inUseTracks,
+        // state.effects
+    ]);
 
     /**
      * UseEffect hook to begin or stop Tone.JS when the isPlaying state is toggled.
@@ -437,12 +451,12 @@ const DrumMachine = () => {
                     readToStateFromJSONFile={readToStateFromJSONFile}
                 />
 
-                <EffectsContainer
+                {/* <EffectsContainer
                     state={state}
                     changeEffectParam={changeEffectParam}
                     currentBeat={beatNum}
                     isPlaying={isPlaying}
-                />
+                /> */}
 
                 <TracksContainer
                     state={state}

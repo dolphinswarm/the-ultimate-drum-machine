@@ -44,6 +44,8 @@ export const drumMachineStateSlice = createSlice({
             //         ? { ...track, volume: action.payload.volume }
             //         : track;
             // });
+            state.inUseTracks[action.payload.trackName].volume =
+                action.payload.volume;
         },
         // Change the parameter of an effect
         changeEffectParam: (
@@ -60,6 +62,10 @@ export const drumMachineStateSlice = createSlice({
             //         ? { ...track, : action.payload.volume }
             //         : track;
             // });
+            // const param = state.effects[action.payload.effectName].params.find(
+            //     (_) => _.name === action.payload.paramName
+            // );
+            // param!.amount = action.payload.amount;
         },
         setBPM: (state, action: PayloadAction<number>) => {
             state.bpm = action.payload;

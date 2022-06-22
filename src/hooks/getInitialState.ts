@@ -312,8 +312,8 @@ const allEffects = [
     {
         displayName: "Reverb",
         params: [
-            { name: "wet-dry", amount: 0, min: 0, max: 0 },
-            { name: "decay", amount: 0, min: 0, max: 0 },
+            { name: "wet-dry", amount: 0, min: 0, max: 1 },
+            { name: "decay", amount: 1, min: 1, max: 1000 },
         ],
     },
 ];
@@ -322,7 +322,7 @@ export const getInitialState = (): DrumMachineState => {
     return {
         inUseTracks: {},
         availableTracks: convertArrayToRecord(allTracks, "displayName"),
-        effects: convertArrayToRecord(allEffects, "displayName"),
+        // effects: convertArrayToRecord(allEffects, "displayName"),
         bpm: 120,
     };
 };
