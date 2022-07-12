@@ -32,7 +32,10 @@ export const drumMachineStateSlice = createSlice({
         // Reorder / sort the tracks
         // (this is handled by the function)
         reorderInUseTracks: (state, action: PayloadAction<InUseTrack[]>) => {
-            // state.inUseTracks = convertArrayToRecord(action.payload, "displayName");
+            state.inUseTracks = convertArrayToRecord(
+                action.payload,
+                "displayName"
+            );
         },
         // Change the volume of a track
         changeTrackVolume: (
@@ -92,7 +95,9 @@ export const drumMachineStateSlice = createSlice({
             state,
             action: PayloadAction<DrumMachineState>
         ) => {
-            state = action.payload;
+            state.inUseTracks = action.payload.inUseTracks;
+            state.bpm = action.payload.bpm;
+            state.availableTracks = action.payload.availableTracks;
         },
         /*  REMOVING THIS FOR NOW
         // Add a new track to the machine

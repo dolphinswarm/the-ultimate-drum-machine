@@ -150,8 +150,11 @@ const TracksContainer = ({
                             {...provided.droppableProps}
                             ref={provided.innerRef}
                         >
-                            {Object.values(state.inUseTracks).map(
-                                (track, index) => (
+                            {Object.values(state.inUseTracks)
+                                .sort((a, b) =>
+                                    a.sortOrder > b.sortOrder ? 1 : -1
+                                )
+                                .map((track, index) => (
                                     <Track
                                         key={track.displayName}
                                         index={index}
@@ -184,8 +187,7 @@ const TracksContainer = ({
                                             )
                                         }
                                     />
-                                )
-                            )}
+                                ))}
                             {provided.placeholder}
                         </div>
                     )}

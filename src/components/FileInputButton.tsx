@@ -15,7 +15,7 @@ const FileInputButton = ({
 
         // Check if the extension is .txt
         const extension = fileName.split(".").pop();
-        const isSupported = ["txt"].includes(extension);
+        const isSupported = ["txt", "json"].includes(extension);
         if (!isSupported) {
             alert("Invalid file format. Please only submit .txt files!");
             return;

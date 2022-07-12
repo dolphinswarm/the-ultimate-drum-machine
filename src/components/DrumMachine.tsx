@@ -131,23 +131,20 @@ const DrumMachine = () => {
      */
     const readToStateFromJSONFile = (state: DrumMachineState) => {
         // For each in-use track, if a player doesn't exist, create it
-        // state.inUseTracks.forEach((track) => {
-        //     // Create a new track
-        //     const player = new Tone.Player(
-        //         track.instrumentLocation
-        //     ).toDestination();
-        //     const playerChannel = new Tone.Channel().toDestination();
-        //     playerChannel.send("chorus");
-        //     playerChannel.send("distortion");
-        //     playerChannel.send("reverb");
-        //     playerChannel.send("bitcrush");
-        //     player.connect(playerChannel);
+        Object.keys(state.inUseTracks).forEach((track) => {
+            if (!players[track]) {
+                // Create a new track
+                const player = new Tone.Player(
+                    state.inUseTracks[track].instrumentLocation
+                ).toDestination();
 
-        //     setPlayers((players) => ({
-        //         ...players,
-        //         [track.displayName]: player,
-        //     }));
-        // });
+                // Add the players and player channels to state
+                setPlayers((players) => ({
+                    ...players,
+                    [track]: player,
+                }));
+            }
+        });
 
         // Update the state
         dispatch(actions.importStateFromJSON(state));
@@ -173,6 +170,7 @@ const DrumMachine = () => {
             ...availableTrack,
             volume: 0,
             beats: new Array(16).fill(0),
+            sortOrder: Object.keys(state.inUseTracks).length + 1,
         };
 
         // Create a new track
@@ -255,6 +253,7 @@ const DrumMachine = () => {
             ...state.availableTracks[newInstrumentName],
             beats: originalTrack.beats,
             volume: originalTrack.volume,
+            sortOrder: originalTrack.sortOrder,
         };
 
         // Create a new player for the track
@@ -278,12 +277,19 @@ const DrumMachine = () => {
         if (!destination || destination.index === source.index) return;
 
         // Make a copy of the tracks in state and splice it
+        debugger;
         const tracks = [...Object.values(state.inUseTracks)];
         const [removed] = tracks.splice(source.index, 1);
         tracks.splice(destination.index, 0, removed);
 
+        // Create a new array of tracks
+        const newTracks = tracks.map((track, index) => ({
+            ...track,
+            sortOrder: index + 1,
+        }));
+
         // Send the spliced track list to state
-        dispatch(actions.reorderInUseTracks(tracks));
+        dispatch(actions.reorderInUseTracks(newTracks));
     };
 
     /**

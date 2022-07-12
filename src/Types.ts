@@ -30,6 +30,7 @@ export type AvailableTrack = {
 export type InUseTrack = AvailableTrack & {
     volume: number;
     beats: number[];
+    sortOrder: number;
 };
 
 type EffectParam = {
