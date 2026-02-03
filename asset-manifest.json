@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/the-ultimate-drum-machine/static/css/main.3d813e95.css",
-    "main.js": "/the-ultimate-drum-machine/static/js/main.aadd624f.js",
+    "main.css": "/the-ultimate-drum-machine/static/css/main.ba5fc797.css",
+    "main.js": "/the-ultimate-drum-machine/static/js/main.17c825d8.js",
     "static/js/787.781e7885.chunk.js": "/the-ultimate-drum-machine/static/js/787.781e7885.chunk.js",
     "index.html": "/the-ultimate-drum-machine/index.html",
-    "main.3d813e95.css.map": "/the-ultimate-drum-machine/static/css/main.3d813e95.css.map",
-    "main.aadd624f.js.map": "/the-ultimate-drum-machine/static/js/main.aadd624f.js.map",
+    "main.ba5fc797.css.map": "/the-ultimate-drum-machine/static/css/main.ba5fc797.css.map",
+    "main.17c825d8.js.map": "/the-ultimate-drum-machine/static/js/main.17c825d8.js.map",
     "787.781e7885.chunk.js.map": "/the-ultimate-drum-machine/static/js/787.781e7885.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3d813e95.css",
-    "static/js/main.aadd624f.js"
+    "static/css/main.ba5fc797.css",
+    "static/js/main.17c825d8.js"
   ]
 }
