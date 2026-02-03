@@ -1,46 +1,113 @@
-# Getting Started with Create React App
+# The Ultimate Drum Machine
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![The Ultimate Drum Machine](the-ultimate-drum-machine.png)
 
-## Available Scripts
+A browser-based, 16‑step drum sequencer built with React + TypeScript and powered by Tone.js.
 
-In the project directory, you can run:
+Live demo: https://dolphinswarm.github.io/the-ultimate-drum-machine
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- 16-step grid sequencer
+- Add tracks by instrument category (kick, snare, hi-hat, clap, FX, crash, ride, tom, accessory)
+- Switch instruments per track (dropdown)
+- Per-track volume control
+- Drag-and-drop track reordering
+- BPM control (30–240)
+- Pattern import/export (downloads a file you can re-load later)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Getting started
 
-### `npm test`
+### Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js (recommended: LTS)
+- npm
 
-### `npm run build`
+### Install
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Run locally
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm start
+```
 
-### `npm run eject`
+Then open http://localhost:3000.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Build
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm run build
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Test
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```bash
+npm test
+```
 
-## Learn More
+## How to use
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Add a track
+	- Pick a category under “Add track”, then click “Add”.
+2. Program beats
+	- Double-click a step to toggle it.
+	- Most instruments: Off → On → Off
+	- Hi-hat steps: Off → On → Roll → Off
+3. Press Play
+	- Browsers require a user gesture before audio will start; clicking Play will resume the audio context.
+4. Tweak your groove
+	- Change BPM (applies when you leave the BPM input).
+	- Use the volume slider per track.
+	- Switch instruments with the “Select Instrument” dropdown.
+	- Reorder tracks by dragging the handle (three-dots icon).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Import / Export
+
+- Export: click “Export” to download `beat.txt` (it contains JSON for the full drum machine state).
+- Import: click “Import” and select a previously exported file.
+
+Tip: exported files include both the current pattern and the remaining available instruments, so re-importing brings back the same project state.
+
+## Deployment (GitHub Pages)
+
+This repo is set up to deploy the production build to GitHub Pages.
+
+```bash
+npm run deploy
+```
+
+Notes:
+
+- `npm run deploy` runs `npm run build` first (via `predeploy`).
+- The `homepage` field in `package.json` controls the GitHub Pages base path.
+
+## Project structure
+
+- `src/components/` – UI components (tracks, beats, controls)
+- `src/state/` – state reducer/actions (Redux Toolkit slice used via `useReducer`)
+- `src/hooks/getInitialState.ts` – defines all available sample tracks and initial state
+- `public/sample/` – audio samples grouped by category
+- `public/img/` – UI images/icons
+
+## Troubleshooting
+
+- “Something is already running on port 3000”
+  - Stop the other process using 3000, or accept the prompt to run on a different port.
+- No sound
+  - Make sure you pressed Play at least once (audio context needs a user gesture), and check your system/browser audio output.
+- GitHub Pages asset paths look broken
+  - Ensure `homepage` in `package.json` matches your repo pages URL.
+
+## Tech
+
+- React + TypeScript (Create React App)
+- Tone.js for sample playback and scheduling
+- react-beautiful-dnd for track reordering
+
+## License
+
+No license file is currently included in this repository.
