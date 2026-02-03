@@ -93,21 +93,12 @@ Notes:
 - `public/sample/` – audio samples grouped by category
 - `public/img/` – UI images/icons
 
-## Troubleshooting
-
-- “Something is already running on port 3000”
-  - Stop the other process using 3000, or accept the prompt to run on a different port.
-- No sound
-  - Make sure you pressed Play at least once (audio context needs a user gesture), and check your system/browser audio output.
-- GitHub Pages asset paths look broken
-  - Ensure `homepage` in `package.json` matches your repo pages URL.
-
 ## Tech
 
 - React + TypeScript (Create React App)
 - Tone.js for sample playback and scheduling
 - react-beautiful-dnd for track reordering
 
-## License
-
-No license file is currently included in this repository.
+## Future Improvements
+- Effects (reverb, etc.)
+- Fix issues with deployment and playback
