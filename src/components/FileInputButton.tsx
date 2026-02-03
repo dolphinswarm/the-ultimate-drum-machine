@@ -1,4 +1,6 @@
 import React from "react";
+import { faFileImport } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DrumMachineState } from "../Types";
 
 const FileInputButton = ({
@@ -40,8 +42,8 @@ const FileInputButton = ({
 
     return (
         <div>
-            <button onClick={() => fileInputRef.current!.click()}>
-                Import
+            <button type="button" onClick={() => fileInputRef.current!.click()}>
+                <FontAwesomeIcon icon={faFileImport} /> Import
             </button>
             <input
                 ref={fileInputRef}

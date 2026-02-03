@@ -33,6 +33,8 @@ const Track = ({
     deleteTrack,
     toggleBeat,
 }: TrackProps) => {
+    const publicUrl = process.env.PUBLIC_URL || "";
+
     /**
      * Gets the source of an image, given its category
      * @returns The local source of an image, as a string
@@ -40,23 +42,23 @@ const Track = ({
     const getImageSource = (): string => {
         switch (track.category) {
             case "kick":
-                return "img/kick.png";
+                return `${publicUrl}/img/kick.png`;
             case "snare":
             case "tom":
-                return "img/snare.png";
+                return `${publicUrl}/img/snare.png`;
             case "hihat":
-                return "img/hihat.png";
+                return `${publicUrl}/img/hihat.png`;
             case "ride":
             case "crash":
-                return "img/crash.png";
+                return `${publicUrl}/img/crash.png`;
             case "clap":
-                return "img/clap.png";
+                return `${publicUrl}/img/clap.png`;
             case "fx":
-                return "img/fx.png";
+                return `${publicUrl}/img/fx.png`;
             case "accessory":
-                return "img/accessory.png";
+                return `${publicUrl}/img/accessory.png`;
             default:
-                return "img/accessory.png";
+                return `${publicUrl}/img/accessory.png`;
         }
     };
 

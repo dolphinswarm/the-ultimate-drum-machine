@@ -11,7 +11,6 @@ import {
     InstrumentCategory,
     InUseTrack,
     IToneTrack,
-    IToneEffect,
 } from "../Types";
 import TracksContainer from "./TracksContainer";
 // import EffectsContainer from "./EffectsContainer";
@@ -46,6 +45,23 @@ const DrumMachine = () => {
     // ==============================
     // DRUM MACHINE FUNCTIONS
     // ==============================
+    const resolvePublicAssetUrl = (path: string): string => {
+        const publicUrl = process.env.PUBLIC_URL || "";
+
+        if (!path) return path;
+        if (/^(https?:)?\/\//i.test(path)) return path;
+
+        // If already rooted at PUBLIC_URL, don't double-prefix
+        if (publicUrl && (path === publicUrl || path.startsWith(`${publicUrl}/`))) {
+            return path;
+        }
+
+        // Public assets: `/img/...`, `/sample/...`, etc.
+        if (path.startsWith("/")) return `${publicUrl}${path}`;
+
+        return `${publicUrl}/${path}`;
+    };
+
     /**
      * Toggles a beat on / off.
      * @param trackName The name of the track to change.
@@ -93,14 +109,14 @@ const DrumMachine = () => {
      * @param paramName The name of the parameter to affect.
      * @param amount The new wet/dry of the effect.
      */
-    const changeEffectParam = (
-        effectName: string,
-        paramName: string,
-        amount: number
-    ) => {
-        // Update the state
-        dispatch(actions.changeEffectParam({ effectName, paramName, amount }));
-    };
+    // const changeEffectParam = (
+    //     effectName: string,
+    //     paramName: string,
+    //     amount: number
+    // ) => {
+    //     // Update the state
+    //     dispatch(actions.changeEffectParam({ effectName, paramName, amount }));
+    // };
 
     /**
      * Toggle play / stop of the machine.
@@ -135,7 +151,9 @@ const DrumMachine = () => {
             if (!players[track]) {
                 // Create a new track
                 const player = new Tone.Player(
-                    state.inUseTracks[track].instrumentLocation
+                    resolvePublicAssetUrl(
+                        state.inUseTracks[track].instrumentLocation
+                    )
                 ).toDestination();
 
                 // Add the players and player channels to state
@@ -175,7 +193,7 @@ const DrumMachine = () => {
 
         // Create a new track
         const player = new Tone.Player(
-            newTrack.instrumentLocation
+            resolvePublicAssetUrl(newTrack.instrumentLocation)
         ).toDestination();
 
         // Add the players and player channels to state
@@ -258,7 +276,7 @@ const DrumMachine = () => {
 
         // Create a new player for the track
         const player = new Tone.Player(
-            newTrack.instrumentLocation
+            resolvePublicAssetUrl(newTrack.instrumentLocation)
         ).toDestination();
 
         setPlayers((players) => ({
@@ -455,6 +473,7 @@ const DrumMachine = () => {
                     bpm={state.bpm}
                     state={state}
                     readToStateFromJSONFile={readToStateFromJSONFile}
+                    addTrack={addTrack}
                 />
 
                 {/* <EffectsContainer
@@ -466,7 +485,6 @@ const DrumMachine = () => {
 
                 <TracksContainer
                     state={state}
-                    addTrack={addTrack}
                     deleteTrack={deleteTrack}
                     switchInstruments={switchInstruments}
                     changeTrackVolume={changeTrackVolume}

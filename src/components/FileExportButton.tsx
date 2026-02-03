@@ -1,4 +1,6 @@
 import React from "react";
+import { faFileExport } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DrumMachineState } from "../Types";
 
 const FileExportButton = ({ state }: { state: DrumMachineState }) => {
@@ -15,7 +17,11 @@ const FileExportButton = ({ state }: { state: DrumMachineState }) => {
         document.body.removeChild(element);
     };
 
-    return <button onClick={exportState}>Export</button>;
+    return (
+        <button type="button" onClick={exportState}>
+            <FontAwesomeIcon icon={faFileExport} /> Export
+        </button>
+    );
 };
 
 export default FileExportButton;

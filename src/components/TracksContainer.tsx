@@ -1,10 +1,9 @@
 import React from "react";
-import { DrumMachineState, InstrumentCategory } from "../Types";
+import { DrumMachineState } from "../Types";
 import Track from "./Track";
 import { Droppable } from "react-beautiful-dnd";
 
 type TracksContainerProps = {
-    addTrack: (category: InstrumentCategory) => void;
     state: DrumMachineState;
     currentBeat: number;
     playersRef: React.MutableRefObject<{}>;
@@ -19,7 +18,6 @@ type TracksContainerProps = {
 };
 
 const TracksContainer = ({
-    addTrack,
     state,
     currentBeat,
     playersRef,
@@ -43,104 +41,14 @@ const TracksContainer = ({
         })),
     ];
 
-    // Get a list of all categories and their availability
-    const allCategories: InstrumentCategory[] = [
-        "kick",
-        "snare",
-        "hihat",
-        "clap",
-        "fx",
-        "crash",
-        "ride",
-        "tom",
-        "accessory",
-    ];
-    const categories: {
-        name: InstrumentCategory;
-        anyAvailableTracks: boolean;
-    }[] = allCategories.map((_) => ({
-        name: _,
-        anyAvailableTracks: Object.values(state.availableTracks).some(
-            (i) => i.category === _
-        ),
-    }));
-
-    const trackCategoryRef = React.useRef<HTMLSelectElement>(null);
-
-    const anyAvailableCategoriesLeft = categories.some(
-        (_) => _.anyAvailableTracks
-    );
-    const firstAvailableCategory = anyAvailableCategoriesLeft
-        ? categories.filter((_) => _.anyAvailableTracks)[0].name
-        : null;
-
-    const [selectedCategory, setSelectedCategory] =
-        React.useState<InstrumentCategory | null>(() => firstAvailableCategory);
-
-    const doesCategoryHaveAnyAvailable = categories.filter(
-        (_) => _.name === selectedCategory
-    )[0].anyAvailableTracks;
-
-    React.useEffect(() => {
-        if (anyAvailableCategoriesLeft && !doesCategoryHaveAnyAvailable) {
-            setSelectedCategory(firstAvailableCategory);
-        }
-    }, [
-        anyAvailableCategoriesLeft,
-        categories,
-        doesCategoryHaveAnyAvailable,
-        firstAvailableCategory,
-        selectedCategory,
-    ]);
-
     return (
         <>
-            {/* Add Track */}
-            {firstAvailableCategory ? (
-                <>
-                    <select
-                        className="capitalize"
-                        ref={trackCategoryRef}
-                        onChange={(event) =>
-                            setSelectedCategory(
-                                event.target.value as InstrumentCategory
-                            )
-                        }
-                        value={selectedCategory!}
-                    >
-                        {categories.map((category, index) => (
-                            <option
-                                className="capitalize"
-                                key={index}
-                                value={category.name}
-                                disabled={!category.anyAvailableTracks}
-                            >
-                                {category.name}
-                            </option>
-                        ))}
-                    </select>
-                    <button
-                        onClick={() =>
-                            addTrack(
-                                trackCategoryRef.current
-                                    ?.value as InstrumentCategory
-                            )
-                        }
-                        disabled={
-                            Object.values(state.availableTracks).length <= 0
-                        }
-                    >
-                        Add Track
-                    </button>
-                </>
-            ) : null}
-
             {/* Track Container */}
             <div id="track-container">
                 {Object.values(state.inUseTracks).length === 0 ? (
                     <p id="start-label">
                         You can start making beats by selecting a track category
-                        then clicking "Add Track" above!
+                        then clicking "Add" in the controls above!
                     </p>
                 ) : null}
                 <Droppable droppableId="drum-machine-tracks">

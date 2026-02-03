@@ -40,6 +40,57 @@ body {
     padding-bottom: 20px;
 }
 
+#controls-container {
+    width: 88%;
+    margin: 30px auto;
+    padding: 12px 16px;
+    border-radius: 10px;
+    box-shadow: 0 0 0 4px #000, 0 0 0 8px rgb(53, 53, 53), 0 0 0 12px #000;
+    background-color: #0f0f0f;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.controls-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Vertical dividers between groups */
+.controls-group + .controls-group {
+    border-left: 1px solid rgb(53, 53, 53);
+    padding-left: 14px;
+}
+
+.controls-group--end {
+    margin-left: auto;
+}
+
+.controls-label {
+    color: white;
+    font-family: "Fira Sans", sans-serif;
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+#controls-container input,
+#controls-container select {
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+
+#controls-container button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .capitalize {
     text-transform: capitalize;
 }
